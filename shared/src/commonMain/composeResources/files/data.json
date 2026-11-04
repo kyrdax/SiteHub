@@ -1,0 +1,24 @@
+{
+  "labels": [
+    {
+      "id": 1,
+      "title": "Cocina",
+      "color": "#FFFFFF"
+    },
+    {
+      "id": 2,
+      "title": "Tips",
+      "color": "#0000FF"
+    }
+  ],
+
+  "cards": [
+    {
+      "id": 1,
+      "title": "Kyrdax",
+      "description": "",
+      "url": "https://kyrdax.com",
+      "labels": [2]
+    }
+  ]
+}
