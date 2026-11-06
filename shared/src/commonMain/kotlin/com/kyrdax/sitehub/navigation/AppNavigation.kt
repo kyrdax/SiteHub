@@ -3,7 +3,9 @@ package com.kyrdax.sitehub.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.kyrdax.sitehub.screens.SiteCardsScreen
 
 @Composable
 fun AppNavigation(): Unit {
@@ -13,6 +15,6 @@ fun AppNavigation(): Unit {
         navController = navController,
         startDestination = AppScreens.SiteCardsScreen.route
     ) {
-        composable(route = AppScreens.SiteCardsScreen.route) {  }
+        composable(route = AppScreens.SiteCardsScreen.route) { SiteCardsScreen(navController) }
     }
 }

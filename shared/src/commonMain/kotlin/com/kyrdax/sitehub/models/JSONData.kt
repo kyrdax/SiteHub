@@ -20,6 +20,6 @@ data class JSONCard(
 
 @Serializable
 data class JSONData(
-    val labels: List<JSONLabel>,
-    val cards: List<JSONCard>
+    val labels: List<JSONLabel> = emptyList(),
+    val cards: List<JSONCard> = emptyList()
 )
