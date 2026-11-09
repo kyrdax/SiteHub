@@ -5,16 +5,23 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.kyrdax.sitehub.repositories.JSONRepository
 import com.kyrdax.sitehub.screens.SiteCardsScreen
 
 @Composable
 fun AppNavigation(): Unit {
     val navController: NavHostController = rememberNavController()
+    val jsonRepository: JSONRepository = JSONRepository()
 
     NavHost(
         navController = navController,
         startDestination = AppScreens.SiteCardsScreen.route
     ) {
-        composable(route = AppScreens.SiteCardsScreen.route) { SiteCardsScreen(navController) }
+        composable(route = AppScreens.SiteCardsScreen.route) {
+            SiteCardsScreen(
+                navController = navController,
+                jsonRepository = jsonRepository
+            )
+        }
     }
 }
