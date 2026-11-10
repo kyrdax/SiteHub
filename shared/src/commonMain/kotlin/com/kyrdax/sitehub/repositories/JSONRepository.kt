@@ -42,7 +42,12 @@ class JSONRepository {
 
     fun deleteLabel(id: Int) {
         _jsonData.update { currentState ->
-            currentState.copy(labels = currentState.labels.filterNot { it.id == id })
+            currentState.copy(
+                labels = currentState.labels.filterNot { it.id == id },
+                cards = currentState.cards.map { card ->
+                    card.copy(labels = card.labels - id)
+                }
+            )
         }
 
         save(_jsonData.value)

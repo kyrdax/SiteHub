@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -20,6 +21,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,7 +36,22 @@ import com.kyrdax.sitehub.repositories.JSONRepository
 
 @Composable
 fun SiteCardsScreen(navController: NavController, jsonRepository: JSONRepository) {
-    Scaffold() { innerPadding ->
+    Scaffold(
+         topBar = {
+             CenterAlignedTopAppBar(
+                 title = {
+                     Text(
+                         text = "SiteHub"
+                     )
+                 },
+                 actions = {
+                     Text(
+                         text = "by kyrdax"
+                     )
+                 }
+             )
+         }
+    ) { innerPadding ->
         SiteCardsScreenBodyContent(
             modifier = Modifier.padding(innerPadding),
             navController = navController,
@@ -53,11 +70,11 @@ fun SiteCardsScreenBodyContent(modifier: Modifier, navController: NavController,
 
         Button(
             onClick = {
-                navController.navigate(AppScreens.AddLabelScreen.route)
+                navController.navigate(AppScreens.EditDeleteLabelScreen.route)
             }
         ) {
             Text(
-                text = "Add new label"
+                text = "Labels"
             )
         }
 

@@ -17,6 +17,7 @@ kotlin = "2.4.21"
 kotlinx-coroutines = "1.11.0"
 kotlinxSerializationJson = "1.12.0"
 material3 = "1.12.0-alpha03"
+materialIconsCore = "1.7.8"
 navigationCompose = "2.10.0"
 okio = "<última versión>"
 okioVersion = "<3.18.2>"
@@ -24,6 +25,7 @@ squareupOkio = "3.18.2"
 ui = "1.12.1"
 
 [libraries]
+androidx-material-icons-core = { module = "androidx.compose.material:material-icons-core", version.ref = "materialIconsCore" }
 androidx-ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
 colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpickerCompose" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -46,6 +48,7 @@ compose-components-resources = { module = "org.jetbrains.compose.components:comp
 compose-uiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "composeMultiplatform" }
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 okio-v3182 = { module = "com.squareup.okio:okio", version.ref = "okioVersion" }

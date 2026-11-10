@@ -8,12 +8,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,7 +46,28 @@ fun AddLabelScreen(navController: NavController, jsonRepository: JSONRepository)
     val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "New label"
+                    )
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick =  {
+                            navController.navigate(AppScreens.EditDeleteLabelScreen.route)
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                }
+            )
+        }
     ) { innerPadding ->
         AddLabelScreenBodyContent(
             modifier = Modifier.padding(innerPadding),
@@ -56,6 +82,7 @@ fun AddLabelScreen(navController: NavController, jsonRepository: JSONRepository)
 fun AddLabelScreenBodyContent(modifier: Modifier, navController: NavController, jsonRepository: JSONRepository, snackbarHostState: SnackbarHostState) {
     var labelTitle by remember { mutableStateOf("") }
     var selectedColorHex by remember { mutableStateOf("") }
+    var labelTitleError by remember { mutableStateOf(false) }
 
     val colorController = rememberColorPickerController()
     val scope = rememberCoroutineScope()
@@ -69,12 +96,17 @@ fun AddLabelScreenBodyContent(modifier: Modifier, navController: NavController, 
             value = labelTitle,
             onValueChange = {
                 labelTitle = it
+
+                if(labelTitle.isNotEmpty()) {
+                    labelTitleError = false
+                }
             },
             label = {
                 Text(
                     text = "Title"
                 )
-            }
+            },
+            isError = labelTitleError
         )
 
         HsvColorPicker(
@@ -86,19 +118,15 @@ fun AddLabelScreenBodyContent(modifier: Modifier, navController: NavController, 
             }
         )
 
-        Row() {
-            Button(
-                onClick = {
-                    navController.navigate(AppScreens.SiteCardsScreen.route)
-                }
-            ) {
-                Text(
-                    text = "Cancel"
-                )
-            }
-
-            Button(
-                onClick = {
+        Button(
+            onClick = {
+                if (labelTitle.isBlank()) {
+                    labelTitleError = true
+                } else if (jsonRepository.jsonData.value.labels.filter { it.title == labelTitle }.isNotEmpty()) {
+                    scope.launch {
+                        snackbarHostState.showSnackbar("Label \"$labelTitle\" already exists")
+                    }
+                } else {
                     jsonRepository.add(
                         JSONLabel(
                             title = labelTitle,
@@ -107,14 +135,19 @@ fun AddLabelScreenBodyContent(modifier: Modifier, navController: NavController, 
                     )
 
                     scope.launch {
-                        snackbarHostState.showSnackbar("Label created successfully!")
+                        snackbarHostState.showSnackbar("Label \"$labelTitle\" created successfully!")
+                    }
+
+                    scope.launch {
+                        labelTitle = ""
                     }
                 }
-            ) {
-                Text(
-                    text = "Add"
-                )
             }
+        ) {
+            Text(
+                text = "Add"
+            )
         }
+
     }
 }

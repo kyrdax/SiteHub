@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.kyrdax.sitehub.repositories.JSONRepository
 import com.kyrdax.sitehub.screens.AddLabelScreen
+import com.kyrdax.sitehub.screens.DeleteLabelScreen
 import com.kyrdax.sitehub.screens.SiteCardsScreen
 
 @Composable
@@ -26,6 +27,9 @@ fun AppNavigation(): Unit {
         }
         composable(route = AppScreens.AddLabelScreen.route) {
             AddLabelScreen(navController, jsonRepository)
+        }
+        composable(route = AppScreens.EditDeleteLabelScreen.route) {
+            DeleteLabelScreen(navController, jsonRepository)
         }
     }
 }

@@ -48,6 +48,7 @@ kotlin {
             implementation(libs.squareup.okio.v3182)
             implementation(libs.colorpicker.compose)
             implementation(libs.androidx.ui)
+            implementation(libs.androidx.material.icons.core)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
