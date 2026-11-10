@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -45,6 +46,8 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.navigation.compose)
             implementation(libs.squareup.okio.v3182)
+            implementation(libs.colorpicker.compose)
+            implementation(libs.androidx.ui)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

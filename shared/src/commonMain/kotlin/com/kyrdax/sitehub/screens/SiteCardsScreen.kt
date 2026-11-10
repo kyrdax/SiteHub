@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.kyrdax.sitehub.models.JSONData
+import com.kyrdax.sitehub.navigation.AppScreens
 import com.kyrdax.sitehub.repositories.JSONRepository
 
 @Composable
@@ -52,7 +53,7 @@ fun SiteCardsScreenBodyContent(modifier: Modifier, navController: NavController,
 
         Button(
             onClick = {
-
+                navController.navigate(AppScreens.AddLabelScreen.route)
             }
         ) {
             Text(

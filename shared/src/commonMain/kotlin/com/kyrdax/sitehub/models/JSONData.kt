@@ -4,14 +4,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class JSONLabel(
-    val id: Int,
+    val id: Int = 0,
     val title: String,
     val color: String
 )
 
 @Serializable
 data class JSONCard(
-    val id: Int,
+    val id: Int = 0,
     val title: String,
     val description: String = "",
     val url: String,

@@ -22,7 +22,11 @@ class JSONRepository {
 
     fun add(jsonLabel: JSONLabel) {
         _jsonData.update { currentState ->
-            currentState.copy(labels = currentState.labels + jsonLabel)
+            currentState.copy(labels = currentState.labels + JSONLabel(
+                id = getNextFreeLabelId(),
+                title = jsonLabel.title,
+                color = jsonLabel.color
+            ))
         }
 
         save(_jsonData.value)
@@ -31,6 +35,14 @@ class JSONRepository {
     fun add(jsonCard: JSONCard) {
         _jsonData.update { currentState ->
             currentState.copy(cards = currentState.cards + jsonCard)
+        }
+
+        save(_jsonData.value)
+    }
+
+    fun deleteLabel(id: Int) {
+        _jsonData.update { currentState ->
+            currentState.copy(labels = currentState.labels.filterNot { it.id == id })
         }
 
         save(_jsonData.value)
@@ -50,5 +62,9 @@ class JSONRepository {
         FileSystem.SYSTEM.write(path) {
             writeUtf8(json.encodeToString(jsonData))
         }
+    }
+
+    private fun getNextFreeLabelId(): Int {
+        return if (jsonData.value.labels.isEmpty()) 1 else jsonData.value.labels.last().id + 1
     }
 }
