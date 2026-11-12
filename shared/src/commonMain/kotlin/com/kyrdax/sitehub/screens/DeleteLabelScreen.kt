@@ -116,7 +116,8 @@ fun DeleteLabelScreenBodyContent(
     var filterText by remember { mutableStateOf("") }
 
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize()
+            .padding(0.dp, 0.dp, 0.dp, 30.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
