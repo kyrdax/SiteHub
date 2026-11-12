@@ -25,6 +25,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -76,7 +77,7 @@ fun AddLabelScreen(navController: NavController, jsonRepository: JSONRepository)
 
 @Composable
 fun AddLabelScreenBodyContent(modifier: Modifier, navController: NavController, jsonRepository: JSONRepository, snackbarHostState: SnackbarHostState) {
-    val addLabelViewModel: AddLabelViewModel = viewModel()
+    val addLabelViewModel: AddLabelViewModel = viewModel { AddLabelViewModel() }
     val addLabelState by addLabelViewModel.addLabelState.collectAsState()
 
     val colorController = rememberColorPickerController()
@@ -135,6 +136,10 @@ fun AddLabelScreenBodyContent(modifier: Modifier, navController: NavController, 
 
                     scope.launch {
                         addLabelViewModel.onLabelTitleChanged("")
+                        colorController.selectByColor(
+                            color = Color(0),
+                            fromUser = true
+                        )
                     }
                 }
             }
