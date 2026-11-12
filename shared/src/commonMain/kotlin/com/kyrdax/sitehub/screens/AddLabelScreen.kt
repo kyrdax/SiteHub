@@ -2,9 +2,7 @@ package com.kyrdax.sitehub.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -20,25 +18,23 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.kyrdax.sitehub.extensions.toHexCode
 import com.kyrdax.sitehub.models.JSONLabel
 import com.kyrdax.sitehub.navigation.AppScreens
 import com.kyrdax.sitehub.repositories.JSONRepository
+import com.kyrdax.sitehub.viewmodels.AddLabelViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -57,7 +53,7 @@ fun AddLabelScreen(navController: NavController, jsonRepository: JSONRepository)
                 navigationIcon = {
                     IconButton(
                         onClick =  {
-                            navController.navigate(AppScreens.EditDeleteLabelScreen.route)
+                            navController.navigate(AppScreens.DeleteLabelScreen.route)
                         }
                     ) {
                         Icon(
@@ -80,9 +76,8 @@ fun AddLabelScreen(navController: NavController, jsonRepository: JSONRepository)
 
 @Composable
 fun AddLabelScreenBodyContent(modifier: Modifier, navController: NavController, jsonRepository: JSONRepository, snackbarHostState: SnackbarHostState) {
-    var labelTitle by remember { mutableStateOf("") }
-    var selectedColorHex by remember { mutableStateOf("") }
-    var labelTitleError by remember { mutableStateOf(false) }
+    val addLabelViewModel: AddLabelViewModel = viewModel()
+    val addLabelState by addLabelViewModel.addLabelState.collectAsState()
 
     val colorController = rememberColorPickerController()
     val scope = rememberCoroutineScope()
@@ -93,12 +88,12 @@ fun AddLabelScreenBodyContent(modifier: Modifier, navController: NavController, 
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         OutlinedTextField(
-            value = labelTitle,
+            value = addLabelState.labelTitle,
             onValueChange = {
-                labelTitle = it
+                addLabelViewModel.onLabelTitleChanged(it)
 
-                if(labelTitle.isNotEmpty()) {
-                    labelTitleError = false
+                if(addLabelState.labelTitle.isNotEmpty()) {
+                    addLabelViewModel.onLabelTitleErrorChanged(false)
                 }
             },
             label = {
@@ -106,7 +101,7 @@ fun AddLabelScreenBodyContent(modifier: Modifier, navController: NavController, 
                     text = "Title"
                 )
             },
-            isError = labelTitleError
+            isError = addLabelState.labelTitleError
         )
 
         HsvColorPicker(
@@ -114,32 +109,32 @@ fun AddLabelScreenBodyContent(modifier: Modifier, navController: NavController, 
                 .height(200.dp),
             controller = colorController,
             onColorChanged = {
-                selectedColorHex = it.color.toHexCode()
+                addLabelViewModel.onSelectedColorHexChanged(it.color.toHexCode())
             }
         )
 
         Button(
             onClick = {
-                if (labelTitle.isBlank()) {
-                    labelTitleError = true
-                } else if (jsonRepository.jsonData.value.labels.filter { it.title == labelTitle }.isNotEmpty()) {
+                if (addLabelState.labelTitle.isBlank()) {
+                    addLabelViewModel.onLabelTitleErrorChanged(true)
+                } else if (jsonRepository.jsonData.value.labels.filter { it.title == addLabelState.labelTitle }.isNotEmpty()) {
                     scope.launch {
-                        snackbarHostState.showSnackbar("Label \"$labelTitle\" already exists")
+                        snackbarHostState.showSnackbar("Label \"${addLabelState.labelTitle}\" already exists")
                     }
                 } else {
                     jsonRepository.add(
                         JSONLabel(
-                            title = labelTitle,
-                            color = selectedColorHex
+                            title = addLabelState.labelTitle,
+                            color = addLabelState.selectedColorHex
                         )
                     )
 
                     scope.launch {
-                        snackbarHostState.showSnackbar("Label \"$labelTitle\" created successfully!")
+                        snackbarHostState.showSnackbar("Label \"${addLabelState.labelTitle}\" created successfully!")
                     }
 
                     scope.launch {
-                        labelTitle = ""
+                        addLabelViewModel.onLabelTitleChanged("")
                     }
                 }
             }

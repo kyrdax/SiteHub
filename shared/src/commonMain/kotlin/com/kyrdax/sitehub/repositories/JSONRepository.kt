@@ -53,6 +53,18 @@ class JSONRepository {
         save(_jsonData.value)
     }
 
+    fun updateLabel(id: Int, title: String, color: String) {
+        _jsonData.update { currentState ->
+            currentState.copy(
+                labels = currentState.labels.map { label ->
+                    if (label.id == id) label.copy(title = title, color = color) else label
+                }
+            )
+        }
+
+        save(_jsonData.value)
+    }
+
     fun load(): JSONData {
         if (!FileSystem.SYSTEM.exists(path)) return JSONData()
         return try {

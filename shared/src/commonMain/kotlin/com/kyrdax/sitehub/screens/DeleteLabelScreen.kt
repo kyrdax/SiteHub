@@ -1,7 +1,9 @@
 package com.kyrdax.sitehub.screens
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -17,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -92,7 +95,8 @@ fun DeleteLabelScreen(navController: NavController, jsonRepository: JSONReposito
         DeleteLabelScreenBodyContent(
             modifier = Modifier.padding(innerPadding),
             jsonRepository = jsonRepository,
-            snackbarHostState = snackbarHostState
+            snackbarHostState = snackbarHostState,
+            navController
         )
     }
 }
@@ -101,7 +105,8 @@ fun DeleteLabelScreen(navController: NavController, jsonRepository: JSONReposito
 fun DeleteLabelScreenBodyContent(
     modifier: Modifier,
     jsonRepository: JSONRepository,
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
+    navController: NavController
 ) {
     val jsonData by jsonRepository.jsonData.collectAsState()
     val scope = rememberCoroutineScope()
@@ -151,11 +156,34 @@ fun DeleteLabelScreenBodyContent(
                         modifier = Modifier.width(10.dp)
                     )
 
-                    OutlinedTextField(
-                        value = it.title,
-                        readOnly = true,
-                        onValueChange = {}
-                    )
+                    Box{
+                        OutlinedTextField(
+                            value = it.title,
+                            readOnly = true,
+                            onValueChange = {},
+                            modifier = Modifier.width(200.dp)
+                        )
+
+                        Box(
+                            Modifier.matchParentSize().clickable(
+                                enabled = true,
+                                onClick = {
+                                    navController.navigate(AppScreens.EditLabelScreen.route + "/${it.id}")
+                                }
+                            )
+                        )
+                    }
+
+                    IconButton(
+                        onClick = {
+                            navController.navigate(AppScreens.EditLabelScreen.route + "/${it.id}")
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edit label"
+                        )
+                    }
 
                     IconButton(
                         onClick = {
