@@ -9,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.savedstate.read
 import com.kyrdax.sitehub.repositories.JSONRepository
+import com.kyrdax.sitehub.screens.AddCardScreen
 import com.kyrdax.sitehub.screens.AddLabelScreen
 import com.kyrdax.sitehub.screens.DeleteLabelScreen
 import com.kyrdax.sitehub.screens.EditLabelScreen
@@ -46,6 +47,9 @@ fun AppNavigation(): Unit {
                 labelId = it.arguments!!.read { getInt("id") },
                 jsonRepository = jsonRepository
             )
+        }
+        composable(route = AppScreens.AddCardScreen.route) {
+            AddCardScreen(navController, jsonRepository)
         }
     }
 }
