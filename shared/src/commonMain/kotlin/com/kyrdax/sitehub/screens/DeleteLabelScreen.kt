@@ -141,7 +141,16 @@ fun DeleteLabelScreenBodyContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             items(
-                if (deleteLabelState.filterText.isBlank()) jsonData.labels else jsonData.labels.filter { it.title.contains(deleteLabelState.filterText) },
+                items = if (deleteLabelState.filterText.isBlank()) {
+                    jsonData.labels
+                } else {
+                    jsonData.labels.filter {
+                        it.title.contains(
+                            other = deleteLabelState.filterText,
+                            ignoreCase = true
+                        )
+                    }
+                },
                 key = {it.id}
             ) {
                 Row(
