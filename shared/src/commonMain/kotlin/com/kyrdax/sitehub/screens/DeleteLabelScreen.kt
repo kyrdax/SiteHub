@@ -45,10 +45,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.kyrdax.sitehub.extensions.hexToColor
 import com.kyrdax.sitehub.navigation.AppScreens
 import com.kyrdax.sitehub.repositories.JSONRepository
+import com.kyrdax.sitehub.viewmodels.DeleteLabelViewModel
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.vectorResource
 
@@ -111,9 +113,8 @@ fun DeleteLabelScreenBodyContent(
     val jsonData by jsonRepository.jsonData.collectAsState()
     val scope = rememberCoroutineScope()
 
-    var showDeleteWarning by remember { mutableStateOf(false) }
-    var deleteLabelName by remember { mutableStateOf("") }
-    var filterText by remember { mutableStateOf("") }
+    val deleteLabelViewModel: DeleteLabelViewModel = viewModel { DeleteLabelViewModel() }
+    val deleteLabelState by deleteLabelViewModel.deleteLabelState.collectAsState()
 
     Column(
         modifier = modifier.fillMaxSize()
@@ -122,9 +123,9 @@ fun DeleteLabelScreenBodyContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         OutlinedTextField(
-            value = filterText,
+            value = deleteLabelState.filterText,
             onValueChange = {
-                filterText = it
+                deleteLabelViewModel.onFilterTextChanged(it)
             },
             leadingIcon = {
                 Icon(
@@ -140,7 +141,7 @@ fun DeleteLabelScreenBodyContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             items(
-                if (filterText.isBlank()) jsonData.labels else jsonData.labels.filter { it.title.contains(filterText) },
+                if (deleteLabelState.filterText.isBlank()) jsonData.labels else jsonData.labels.filter { it.title.contains(deleteLabelState.filterText) },
                 key = {it.id}
             ) {
                 Row(
@@ -188,8 +189,8 @@ fun DeleteLabelScreenBodyContent(
 
                     IconButton(
                         onClick = {
-                            deleteLabelName = it.title
-                            showDeleteWarning = true
+                            deleteLabelViewModel.onDeleteLabelNameChanged(it.title)
+                            deleteLabelViewModel.onShowDeleteWarningChanged(true)
                         }
                     ) {
                         Icon(
@@ -202,10 +203,10 @@ fun DeleteLabelScreenBodyContent(
         }
     }
 
-    if(showDeleteWarning) {
+    if(deleteLabelState.showDeleteWarning) {
         AlertDialog(
             onDismissRequest = {
-                showDeleteWarning = false
+                deleteLabelViewModel.onShowDeleteWarningChanged(false)
             },
             title = {
                 Text(
@@ -214,21 +215,21 @@ fun DeleteLabelScreenBodyContent(
             },
             text = {
                 Text(
-                    text = "Are you sure you want to delete the label \"$deleteLabelName\"?"
+                    text = "Are you sure you want to delete the label \"${deleteLabelState.deleteLabelName}\"?"
                 )
             },
             confirmButton = {
                 TextButton(
                     onClick = {
                         jsonRepository.deleteLabel(
-                            id = jsonData.labels.first{ it.title == deleteLabelName }.id
+                            id = jsonData.labels.first{ it.title == deleteLabelState.deleteLabelName }.id
                         )
 
                         scope.launch {
-                            snackbarHostState.showSnackbar("Label \"$deleteLabelName\" deleted successfully!")
+                            snackbarHostState.showSnackbar("Label \"${deleteLabelState.deleteLabelName}\" deleted successfully!")
                         }
 
-                        showDeleteWarning = false
+                        deleteLabelViewModel.onShowDeleteWarningChanged(false)
                     }
                 ) {
                     Text(
@@ -239,7 +240,7 @@ fun DeleteLabelScreenBodyContent(
             dismissButton = {
                 TextButton(
                     onClick = {
-                        showDeleteWarning = false
+                        deleteLabelViewModel.onShowDeleteWarningChanged(false)
                     }
                 ) {
                     Text(
