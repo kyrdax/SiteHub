@@ -118,7 +118,12 @@ fun AddLabelScreenBodyContent(modifier: Modifier, navController: NavController, 
             onClick = {
                 if (addLabelState.labelTitle.isBlank()) {
                     addLabelViewModel.onLabelTitleErrorChanged(true)
-                } else if (jsonRepository.jsonData.value.labels.filter { it.title == addLabelState.labelTitle }.isNotEmpty()) {
+                } else if (jsonRepository.jsonData.value.labels.any {
+                        it.title.equals(
+                            addLabelState.labelTitle,
+                            ignoreCase = true
+                        )
+                    }) {
                     scope.launch {
                         snackbarHostState.showSnackbar("Label \"${addLabelState.labelTitle}\" already exists")
                     }
