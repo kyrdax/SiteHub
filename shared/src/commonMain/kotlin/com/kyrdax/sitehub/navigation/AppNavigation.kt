@@ -43,7 +43,8 @@ fun AppNavigation(): Unit {
         ) {
             EditLabelScreen(
                 navController = navController,
-                labelId = it.arguments!!.read { getInt("id") }
+                labelId = it.arguments!!.read { getInt("id") },
+                jsonRepository = jsonRepository
             )
         }
     }

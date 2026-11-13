@@ -65,6 +65,19 @@ class JSONRepository {
         save(_jsonData.value)
     }
 
+    fun getLabelById(id: Int): JSONLabel {
+        var jsonLabel: JSONLabel = JSONLabel(title = "", color = "")
+
+        for (label: JSONLabel in _jsonData.value.labels) {
+            if (label.id == id) {
+                jsonLabel = label
+                break
+            }
+        }
+
+        return jsonLabel
+    }
+
     fun load(): JSONData {
         if (!FileSystem.SYSTEM.exists(path)) return JSONData()
         return try {

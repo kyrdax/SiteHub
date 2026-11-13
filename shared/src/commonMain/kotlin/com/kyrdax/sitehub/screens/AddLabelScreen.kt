@@ -35,7 +35,7 @@ import com.kyrdax.sitehub.extensions.toHexCode
 import com.kyrdax.sitehub.models.JSONLabel
 import com.kyrdax.sitehub.navigation.AppScreens
 import com.kyrdax.sitehub.repositories.JSONRepository
-import com.kyrdax.sitehub.viewmodels.AddLabelViewModel
+import com.kyrdax.sitehub.viewmodels.AddEditLabelViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -77,8 +77,8 @@ fun AddLabelScreen(navController: NavController, jsonRepository: JSONRepository)
 
 @Composable
 fun AddLabelScreenBodyContent(modifier: Modifier, navController: NavController, jsonRepository: JSONRepository, snackbarHostState: SnackbarHostState) {
-    val addLabelViewModel: AddLabelViewModel = viewModel { AddLabelViewModel() }
-    val addLabelState by addLabelViewModel.addLabelState.collectAsState()
+    val addLabelViewModel: AddEditLabelViewModel = viewModel { AddEditLabelViewModel(jsonRepository = jsonRepository) }
+    val addLabelState by addLabelViewModel.addEditLabelState.collectAsState()
 
     val colorController = rememberColorPickerController()
     val scope = rememberCoroutineScope()
