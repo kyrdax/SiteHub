@@ -20,8 +20,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -82,6 +84,8 @@ fun AddLabelScreenBodyContent(modifier: Modifier, navController: NavController, 
     val colorController = rememberColorPickerController()
     val scope = rememberCoroutineScope()
 
+    var labelTitleError by remember { mutableStateOf(false) }
+
     Column(
         modifier  = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -93,7 +97,7 @@ fun AddLabelScreenBodyContent(modifier: Modifier, navController: NavController, 
                 addLabelViewModel.onLabelTitleChanged(it)
 
                 if(addLabelState.labelTitle.isNotEmpty()) {
-                    addLabelViewModel.onLabelTitleErrorChanged(false)
+                    labelTitleError = false
                 }
             },
             label = {
@@ -101,7 +105,7 @@ fun AddLabelScreenBodyContent(modifier: Modifier, navController: NavController, 
                     text = "Title"
                 )
             },
-            isError = addLabelState.labelTitleError
+            isError = labelTitleError
         )
 
         HsvColorPicker(
@@ -116,7 +120,7 @@ fun AddLabelScreenBodyContent(modifier: Modifier, navController: NavController, 
         Button(
             onClick = {
                 if (addLabelState.labelTitle.isBlank()) {
-                    addLabelViewModel.onLabelTitleErrorChanged(true)
+                    labelTitleError = true
                 } else if (jsonRepository.jsonData.value.labels.any {
                         it.title.equals(
                             addLabelState.labelTitle,

@@ -32,10 +32,4 @@ class AddEditLabelViewModel(jsonRepository: JSONRepository, labelId: Int = -1): 
             currentState.copy(selectedColorHex = value)
         }
     }
-
-    fun onLabelTitleErrorChanged(value: Boolean) {
-        _addEditLabelState.update { currentState ->
-            currentState.copy(labelTitleError = value)
-        }
-    }
 }
