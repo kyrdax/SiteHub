@@ -152,10 +152,12 @@ fun AddCardScreenBodyContent(
                 if (addCardState.url.isBlank() || addCardState.cardTitle.isBlank()) {
                     if (addCardState.cardTitle.isBlank()) {
                         titleError = true
+                        addCardViewModel.onCardTitleChanged("")
                     }
 
                     if (addCardState.url.isBlank()) {
                         urlError = true
+                        addCardViewModel.onUrlChanged("")
                     }
 
                     scope.launch {

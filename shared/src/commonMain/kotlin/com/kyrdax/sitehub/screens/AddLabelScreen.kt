@@ -121,6 +121,7 @@ fun AddLabelScreenBodyContent(modifier: Modifier, navController: NavController, 
             onClick = {
                 if (addLabelState.labelTitle.isBlank()) {
                     labelTitleError = true
+                    addLabelViewModel.onLabelTitleChanged("")
                 } else if (jsonRepository.jsonData.value.labels.any {
                         it.title.equals(
                             addLabelState.labelTitle,

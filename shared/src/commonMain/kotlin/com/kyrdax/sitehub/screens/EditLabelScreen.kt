@@ -116,6 +116,7 @@ fun EditLabelScreenBodyContent(modifier: Modifier, jsonRepository: JSONRepositor
             onClick = {
                 if (editLabelState.labelTitle.isBlank()) {
                     labelTitleError = true
+                    editLabelViewModel.onLabelTitleChanged("")
                 } else {
                     jsonRepository.updateLabel(
                         id = labelId,
