@@ -41,7 +41,10 @@ import kotlinx.coroutines.launch
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kyrdax.sitehub.extensions.hexToColor
+import com.kyrdax.sitehub.states.AddCardState
+import com.kyrdax.sitehub.viewmodels.AddCardViewModel
 
 @Composable
 fun AddCardScreen(navController: NavController, jsonRepository: JSONRepository) {
@@ -90,9 +93,8 @@ fun AddCardScreenBodyContent(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        var cardTitle by remember { mutableStateOf("") }
-        var cardDesc by remember { mutableStateOf("") }
-        var url by remember { mutableStateOf("") }
+        val addCardViewModel: AddCardViewModel = viewModel { AddCardViewModel() }
+        val addCardState by addCardViewModel.addCardState.collectAsState()
 
         var titleError by remember { mutableStateOf(false) }
         var urlError by remember { mutableStateOf(false) }
@@ -100,10 +102,10 @@ fun AddCardScreenBodyContent(
         val scope = rememberCoroutineScope()
 
         OutlinedTextField(
-            value = cardTitle,
+            value = addCardState.cardTitle,
             onValueChange = {
                 titleError = false
-                cardTitle = it
+                addCardViewModel.onCardTitleChanged(it)
             },
             label = {
                 Text(
@@ -114,10 +116,10 @@ fun AddCardScreenBodyContent(
         )
 
         OutlinedTextField(
-            value = url,
+            value = addCardState.url,
             onValueChange = {
                 urlError = false
-                url = it
+                addCardViewModel.onUrlChanged(it)
             },
             label = {
                 Text(
@@ -128,9 +130,9 @@ fun AddCardScreenBodyContent(
         )
 
         OutlinedTextField(
-            value = cardDesc,
+            value = addCardState.cardDesc,
             onValueChange = {
-                cardDesc = it
+                addCardViewModel.onCardDescChanged(it)
             },
             label = {
                 Text(
@@ -139,16 +141,20 @@ fun AddCardScreenBodyContent(
             }
         )
 
-        CustomDropdownMenu(jsonRepository)
+        CustomDropdownMenu(
+            jsonRepository = jsonRepository,
+            addCardViewModel = addCardViewModel,
+            addCardState = addCardState
+        )
 
         Button(
             onClick = {
-                if (url.isBlank() || cardTitle.isBlank()) {
-                    if (cardTitle.isBlank()) {
+                if (addCardState.url.isBlank() || addCardState.cardTitle.isBlank()) {
+                    if (addCardState.cardTitle.isBlank()) {
                         titleError = true
                     }
 
-                    if (url.isBlank()) {
+                    if (addCardState.url.isBlank()) {
                         urlError = true
                     }
 
@@ -169,15 +175,17 @@ fun AddCardScreenBodyContent(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomDropdownMenu(jsonRepository: JSONRepository) {
+fun CustomDropdownMenu(
+    jsonRepository: JSONRepository,
+    addCardViewModel: AddCardViewModel,
+    addCardState: AddCardState
+) {
     var dropdownExpanded by remember { mutableStateOf(false) }
-    var filterText by remember { mutableStateOf("") }
-    var selected by rememberSaveable { mutableStateOf(setOf<String>()) }
 
     val jsonData by jsonRepository.jsonData.collectAsState()
-    val filtered = jsonData.labels.filter { it.title.contains(filterText, ignoreCase = true) }
-    val singleSelectedLabel = if (selected.size == 1) {
-        jsonData.labels.firstOrNull { it.title == selected.first() }
+    val filtered = jsonData.labels.filter { it.title.contains(addCardState.filterText, ignoreCase = true) }
+    val singleSelectedLabel = if (addCardState.selected.size == 1) {
+        jsonData.labels.firstOrNull { it.title == addCardState.selected.first() }
     } else null
 
     Column() {
@@ -185,21 +193,21 @@ fun CustomDropdownMenu(jsonRepository: JSONRepository) {
             expanded = dropdownExpanded,
             onExpandedChange = {
                 dropdownExpanded = it
-                if (!dropdownExpanded) filterText = ""
+                if (!dropdownExpanded) addCardViewModel.onFilterTextChanged("")
             }
         ) {
             OutlinedTextField(
                 value = if (dropdownExpanded) {
-                    filterText
+                    addCardState.filterText
                 } else {
-                    when (selected.size) {
+                    when (addCardState.selected.size) {
                         0 -> ""
-                        1 -> selected.first()
-                        else -> "${selected.size} elements selected"
+                        1 -> addCardState.selected.first()
+                        else -> "${addCardState.selected.size} elements selected"
                     }
                 },
                 onValueChange = {
-                    filterText = it
+                    addCardViewModel.onFilterTextChanged(it)
                     dropdownExpanded = true
                 },
                 label = {
@@ -226,7 +234,7 @@ fun CustomDropdownMenu(jsonRepository: JSONRepository) {
                 expanded = dropdownExpanded,
                 onDismissRequest = {
                     dropdownExpanded = false
-                    filterText = ""
+                    addCardViewModel.onFilterTextChanged("")
                 }
             ) {
                 if (filtered.isEmpty()) {
@@ -241,7 +249,7 @@ fun CustomDropdownMenu(jsonRepository: JSONRepository) {
                     )
                 } else {
                     filtered.forEach { label ->
-                        val checked = label.title in selected
+                        val checked = label.title in addCardState.selected
                         DropdownMenuItem(
                             text = {
                                 Text(
@@ -263,7 +271,7 @@ fun CustomDropdownMenu(jsonRepository: JSONRepository) {
                                 }
                             },
                             onClick = {
-                                selected = if (checked) selected - label.title else selected + label.title
+                                addCardViewModel.onSelectedChanged(if (checked) addCardState.selected - label.title else addCardState.selected + label.title)
                             }
                         )
                     }

@@ -82,10 +82,7 @@ fun SiteCardsScreenBodyContent(modifier: Modifier, navController: NavController,
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Test to know if it actually works
-            items(jsonRepository.jsonData.value.labels) {
-                Text(it.title)
-            }
+            //TODO: Cards slider
         }
     }
 }
