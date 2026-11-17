@@ -20,6 +20,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -84,11 +87,14 @@ fun EditLabelScreenBodyContent(modifier: Modifier, jsonRepository: JSONRepositor
             fromUser = true
         )
 
+        var labelTitleError by remember { mutableStateOf(false) }
+
         OutlinedTextField(
             value = editLabelState.labelTitle,
             onValueChange = {
                 editLabelViewModel.onLabelTitleChanged(it)
-            }
+            },
+            isError = labelTitleError
         )
 
         HsvColorPicker(
@@ -108,13 +114,17 @@ fun EditLabelScreenBodyContent(modifier: Modifier, jsonRepository: JSONRepositor
 
         Button(
             onClick = {
-                jsonRepository.updateLabel(
-                    id = labelId,
-                    title = editLabelState.labelTitle,
-                    color = editLabelState.selectedColorHex
-                )
+                if (editLabelState.labelTitle.isBlank()) {
+                    labelTitleError = true
+                } else {
+                    jsonRepository.updateLabel(
+                        id = labelId,
+                        title = editLabelState.labelTitle,
+                        color = editLabelState.selectedColorHex
+                    )
 
-                navController.navigate(AppScreens.DeleteLabelScreen.route)
+                    navController.navigate(AppScreens.DeleteLabelScreen.route)
+                }
             }
         ) {
             Text(
