@@ -11,6 +11,12 @@ class DeleteLabelViewModel: ViewModel() {
     private val _deleteLabelState = MutableStateFlow(DeleteLabelState())
     val deleteLabelState: StateFlow<DeleteLabelState> = _deleteLabelState.asStateFlow()
 
+    fun onDeleteLabelIdChanged(value: Int) {
+        _deleteLabelState.update { currentState ->
+            currentState.copy(deleteLabelId = value)
+        }
+    }
+
     fun onDeleteLabelNameChanged(value: String) {
         _deleteLabelState.update { currentState ->
             currentState.copy(deleteLabelName = value)

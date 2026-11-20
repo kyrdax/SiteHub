@@ -200,7 +200,7 @@ fun DeleteLabelScreenBodyContent(
 
                     IconButton(
                         onClick = {
-                            deleteLabelViewModel.onDeleteLabelNameChanged(label.title)
+                            deleteLabelViewModel.onDeleteLabelIdChanged(label.id)
                             showDeleteWarning = true
                         }
                     ) {
@@ -233,7 +233,7 @@ fun DeleteLabelScreenBodyContent(
                 TextButton(
                     onClick = {
                         jsonRepository.deleteLabel(
-                            id = jsonData.labels.first{ it.title == deleteLabelState.deleteLabelName }.id
+                            id = deleteLabelState.deleteLabelId
                         )
 
                         scope.launch {
