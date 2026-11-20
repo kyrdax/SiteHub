@@ -2,10 +2,12 @@ package com.kyrdax.sitehub.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -47,55 +49,65 @@ import kotlinx.coroutines.launch
 fun SiteCardsScreen(navController: NavController, jsonRepository: JSONRepository) {
     val snackbarHostState = remember { SnackbarHostState() }
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-         topBar = {
-             CenterAlignedTopAppBar(
-                 title = {
-                     Text(
-                         text = "SiteHub"
-                     )
-                 },
-                 actions = {
-                     Text(
-                         text = "by kyrdax"
-                     )
-                 }
-             )
-         },
-        floatingActionButton = {
-            Column {
-                FloatingActionButton(
-                    onClick = {
-                        navController.navigate(AppScreens.DeleteLabelScreen.route)
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Scaffold(
+            topBar = {
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(
+                            text = "SiteHub"
+                        )
                     },
-                    modifier = Modifier.padding(8.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Menu,
-                        contentDescription = "Add label"
-                    )
-                }
+                    actions = {
+                        Text(
+                            text = "by kyrdax"
+                        )
+                    }
+                )
+            },
+            floatingActionButton = {
+                Column {
+                    FloatingActionButton(
+                        onClick = {
+                            navController.navigate(AppScreens.DeleteLabelScreen.route)
+                        },
+                        modifier = Modifier.padding(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Menu,
+                            contentDescription = "Add label"
+                        )
+                    }
 
-                FloatingActionButton(
-                    onClick = {
-                        navController.navigate(AppScreens.AddCardScreen.route)
-                    },
-                    modifier = Modifier.padding(8.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add card"
-                    )
+                    FloatingActionButton(
+                        onClick = {
+                            navController.navigate(AppScreens.AddCardScreen.route)
+                        },
+                        modifier = Modifier.padding(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add card"
+                        )
+                    }
                 }
             }
+        ) { innerPadding ->
+            SiteCardsScreenBodyContent(
+                modifier = Modifier.padding(innerPadding),
+                navController = navController,
+                jsonRepository = jsonRepository,
+                snackbarHostState = snackbarHostState
+            )
         }
-    ) { innerPadding ->
-        SiteCardsScreenBodyContent(
-            modifier = Modifier.padding(innerPadding),
-            navController = navController,
-            jsonRepository = jsonRepository,
-            snackbarHostState = snackbarHostState
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .navigationBarsPadding()
         )
     }
 }
@@ -131,7 +143,7 @@ fun SiteCardsScreenBodyContent(modifier: Modifier, navController: NavController,
                                     uriHandler.openUri(card.url)
                                 } catch (_: Exception) {
                                     scope.launch {
-                                        snackbarHostState.showSnackbar("Could not open URL " + card.url)
+                                        snackbarHostState.showSnackbar("Could not open URL \"${card.url}\"")
                                     }
                                 }
                             }
