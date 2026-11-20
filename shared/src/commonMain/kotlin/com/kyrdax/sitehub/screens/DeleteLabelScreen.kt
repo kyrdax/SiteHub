@@ -116,6 +116,8 @@ fun DeleteLabelScreenBodyContent(
     val deleteLabelViewModel: DeleteLabelViewModel = viewModel { DeleteLabelViewModel() }
     val deleteLabelState by deleteLabelViewModel.deleteLabelState.collectAsState()
 
+    var showDeleteWarning by remember { mutableStateOf(false) }
+
     Column(
         modifier = modifier.fillMaxSize()
             .padding(0.dp, 0.dp, 0.dp, 30.dp),
@@ -199,7 +201,7 @@ fun DeleteLabelScreenBodyContent(
                     IconButton(
                         onClick = {
                             deleteLabelViewModel.onDeleteLabelNameChanged(label.title)
-                            deleteLabelViewModel.onShowDeleteWarningChanged(true)
+                            showDeleteWarning = true
                         }
                     ) {
                         Icon(
@@ -212,10 +214,10 @@ fun DeleteLabelScreenBodyContent(
         }
     }
 
-    if(deleteLabelState.showDeleteWarning) {
+    if(showDeleteWarning) {
         AlertDialog(
             onDismissRequest = {
-                deleteLabelViewModel.onShowDeleteWarningChanged(false)
+                showDeleteWarning = false
             },
             title = {
                 Text(
@@ -238,7 +240,7 @@ fun DeleteLabelScreenBodyContent(
                             snackbarHostState.showSnackbar("Label \"${deleteLabelState.deleteLabelName}\" deleted successfully!")
                         }
 
-                        deleteLabelViewModel.onShowDeleteWarningChanged(false)
+                        showDeleteWarning = false
                     }
                 ) {
                     Text(
@@ -249,7 +251,7 @@ fun DeleteLabelScreenBodyContent(
             dismissButton = {
                 TextButton(
                     onClick = {
-                        deleteLabelViewModel.onShowDeleteWarningChanged(false)
+                        showDeleteWarning = false
                     }
                 ) {
                     Text(
