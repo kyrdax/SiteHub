@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -63,15 +64,30 @@ fun SiteCardsScreen(navController: NavController, jsonRepository: JSONRepository
              )
          },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    navController.navigate(AppScreens.AddCardScreen.route)
+            Column {
+                FloatingActionButton(
+                    onClick = {
+                        navController.navigate(AppScreens.DeleteLabelScreen.route)
+                    },
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Menu,
+                        contentDescription = "Add label"
+                    )
                 }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add card"
-                )
+
+                FloatingActionButton(
+                    onClick = {
+                        navController.navigate(AppScreens.AddCardScreen.route)
+                    },
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add card"
+                    )
+                }
             }
         }
     ) { innerPadding ->
@@ -96,16 +112,6 @@ fun SiteCardsScreenBodyContent(modifier: Modifier, navController: NavController,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         //TODO: Dropdown to filter by labels created by user
-
-        Button(
-            onClick = {
-                navController.navigate(AppScreens.DeleteLabelScreen.route)
-            }
-        ) {
-            Text(
-                text = "Labels"
-            )
-        }
 
         LazyColumn(
             modifier = modifier.fillMaxSize(),
