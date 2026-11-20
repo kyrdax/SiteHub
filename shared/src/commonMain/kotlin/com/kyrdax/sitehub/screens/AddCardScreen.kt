@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kyrdax.sitehub.extensions.hexToColor
+import com.kyrdax.sitehub.models.JSONCard
 import com.kyrdax.sitehub.states.AddCardState
 import com.kyrdax.sitehub.viewmodels.AddCardViewModel
 
@@ -164,7 +165,12 @@ fun AddCardScreenBodyContent(
                         snackbarHostState.showSnackbar("Mandatory fields must be informed")
                     }
                 } else {
-                    //TODO: Implement card addition
+                    jsonRepository.add(JSONCard(
+                        title = addCardState.cardTitle,
+                        description = addCardState.cardDesc,
+                        url = addCardState.url,
+                        labels = addCardState.labelIds
+                    ))
                 }
             }
         ) {
@@ -274,6 +280,7 @@ fun CustomDropdownMenu(
                             },
                             onClick = {
                                 addCardViewModel.onSelectedChanged(if (checked) addCardState.selected - label.title else addCardState.selected + label.title)
+                                addCardViewModel.onLabelIdsChanged(if (checked) addCardState.labelIds - label.id else addCardState.labelIds + label.id)
                             }
                         )
                     }

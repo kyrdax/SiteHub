@@ -34,7 +34,13 @@ class JSONRepository {
 
     fun add(jsonCard: JSONCard) {
         _jsonData.update { currentState ->
-            currentState.copy(cards = currentState.cards + jsonCard)
+            currentState.copy(cards = currentState.cards + JSONCard(
+                id = getNextFreeCardId(),
+                title = jsonCard.title,
+                description = jsonCard.description,
+                url = jsonCard.url,
+                labels = jsonCard.labels
+            ))
         }
 
         save(_jsonData.value)
@@ -96,5 +102,9 @@ class JSONRepository {
 
     private fun getNextFreeLabelId(): Int {
         return if (jsonData.value.labels.isEmpty()) 1 else jsonData.value.labels.last().id + 1
+    }
+
+    private fun getNextFreeCardId(): Int {
+        return if (jsonData.value.cards.isEmpty()) 1 else jsonData.value.cards.last().id + 1
     }
 }

@@ -40,4 +40,10 @@ class AddCardViewModel: ViewModel() {
             currentState.copy(selected = value)
         }
     }
+
+    fun onLabelIdsChanged(value: List<Int>) {
+        _addCardState.update { currentState ->
+            currentState.copy(labelIds = value)
+        }
+    }
 }

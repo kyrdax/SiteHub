@@ -152,14 +152,14 @@ fun DeleteLabelScreenBodyContent(
                     }
                 },
                 key = {it.id}
-            ) {
+            ) { label ->
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Canvas(Modifier.size(24.dp)) {
                         drawCircle(
-                            color = it.color.hexToColor()
+                            color = label.color.hexToColor()
                         )
                     }
 
@@ -169,7 +169,7 @@ fun DeleteLabelScreenBodyContent(
 
                     Box{
                         OutlinedTextField(
-                            value = it.title,
+                            value = label.title,
                             readOnly = true,
                             onValueChange = {},
                             modifier = Modifier.width(200.dp)
@@ -179,7 +179,7 @@ fun DeleteLabelScreenBodyContent(
                             Modifier.matchParentSize().clickable(
                                 enabled = true,
                                 onClick = {
-                                    navController.navigate(AppScreens.EditLabelScreen.route + "/${it.id}")
+                                    navController.navigate(AppScreens.EditLabelScreen.route + "/${label.id}")
                                 }
                             )
                         )
@@ -187,7 +187,7 @@ fun DeleteLabelScreenBodyContent(
 
                     IconButton(
                         onClick = {
-                            navController.navigate(AppScreens.EditLabelScreen.route + "/${it.id}")
+                            navController.navigate(AppScreens.EditLabelScreen.route + "/${label.id}")
                         }
                     ) {
                         Icon(
@@ -198,7 +198,7 @@ fun DeleteLabelScreenBodyContent(
 
                     IconButton(
                         onClick = {
-                            deleteLabelViewModel.onDeleteLabelNameChanged(it.title)
+                            deleteLabelViewModel.onDeleteLabelNameChanged(label.title)
                             deleteLabelViewModel.onShowDeleteWarningChanged(true)
                         }
                     ) {
