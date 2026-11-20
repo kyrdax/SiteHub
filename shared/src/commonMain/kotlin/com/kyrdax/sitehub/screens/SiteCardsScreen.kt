@@ -1,5 +1,6 @@
 package com.kyrdax.sitehub.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,22 +23,31 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.kyrdax.sitehub.navigation.AppScreens
 import com.kyrdax.sitehub.repositories.JSONRepository
+import kotlinx.coroutines.launch
 
 @Composable
 fun SiteCardsScreen(navController: NavController, jsonRepository: JSONRepository) {
+    val snackbarHostState = remember { SnackbarHostState() }
+
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
          topBar = {
              CenterAlignedTopAppBar(
                  title = {
@@ -68,14 +78,18 @@ fun SiteCardsScreen(navController: NavController, jsonRepository: JSONRepository
         SiteCardsScreenBodyContent(
             modifier = Modifier.padding(innerPadding),
             navController = navController,
-            jsonRepository = jsonRepository
+            jsonRepository = jsonRepository,
+            snackbarHostState = snackbarHostState
         )
     }
 }
 
 @Composable
-fun SiteCardsScreenBodyContent(modifier: Modifier, navController: NavController, jsonRepository: JSONRepository) {
+fun SiteCardsScreenBodyContent(modifier: Modifier, navController: NavController, jsonRepository: JSONRepository, snackbarHostState: SnackbarHostState) {
     val jsonData by jsonRepository.jsonData.collectAsState()
+    val uriHandler = LocalUriHandler.current
+
+    val scope = rememberCoroutineScope()
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -105,6 +119,17 @@ fun SiteCardsScreenBodyContent(modifier: Modifier, navController: NavController,
                     ),
                     modifier = Modifier
                         .width(280.dp)
+                        .clickable(
+                            onClick = {
+                                try {
+                                    uriHandler.openUri(card.url)
+                                } catch (_: Exception) {
+                                    scope.launch {
+                                        snackbarHostState.showSnackbar("Could not open URL " + card.url)
+                                    }
+                                }
+                            }
+                        )
                 ) {
                     Text(
                         text = card.title,
