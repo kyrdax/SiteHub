@@ -201,6 +201,7 @@ fun DeleteLabelScreenBodyContent(
                     IconButton(
                         onClick = {
                             deleteLabelViewModel.onDeleteLabelIdChanged(label.id)
+                            deleteLabelViewModel.onDeleteLabelNameChanged(label.title)
                             showDeleteWarning = true
                         }
                     ) {
