@@ -120,10 +120,12 @@ fun SiteCardsScreenBodyContent(modifier: Modifier, navController: NavController,
     val scope = rememberCoroutineScope()
 
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize()
+            .padding(0.dp, 0.dp, 0.dp, 30.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         //TODO: Dropdown to filter by labels created by user
+
 
         LazyColumn(
             modifier = modifier.fillMaxSize(),
