@@ -59,6 +59,16 @@ class JSONRepository {
         save(_jsonData.value)
     }
 
+    fun deleteCard(id: Int) {
+        _jsonData.update { currentState ->
+            currentState.copy(
+                cards = currentState.cards.filterNot { it.id == id }
+            )
+        }
+
+        save(_jsonData.value)
+    }
+
     fun updateLabel(id: Int, title: String, color: String) {
         _jsonData.update { currentState ->
             currentState.copy(
