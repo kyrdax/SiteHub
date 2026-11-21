@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
@@ -26,6 +27,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -126,6 +128,7 @@ fun SiteCardsScreenBodyContent(modifier: Modifier, navController: NavController,
     var showDeleteWarning by remember { mutableStateOf(false) }
     var deleteCardId by remember { mutableStateOf(0) }
     var deleteCardName by remember { mutableStateOf("") }
+    var filterText by remember { mutableStateOf("") }
 
     Column(
         modifier = modifier.fillMaxSize()
@@ -134,13 +137,33 @@ fun SiteCardsScreenBodyContent(modifier: Modifier, navController: NavController,
     ) {
         //TODO: Dropdown to filter by labels created by user
 
+        OutlinedTextField(
+            value = filterText,
+            onValueChange = {
+                filterText = it
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Search card"
+                )
+            },
+            placeholder = {
+                Text(
+                    text = "Search..."
+                )
+            }
+        )
 
         LazyColumn(
             modifier = modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            items(jsonData.cards) { card ->
+            items(
+                if (filterText.isBlank()) jsonData.cards
+                else jsonData.cards.filter { it.title.contains(other = filterText, ignoreCase = true) }
+            ) { card ->
                 ElevatedCard(
                     elevation = CardDefaults.cardElevation(
                         defaultElevation = 6.dp
