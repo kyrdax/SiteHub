@@ -127,7 +127,7 @@ fun SiteCardsScreenBodyContent(modifier: Modifier, navController: NavController,
 
         LazyColumn(
             modifier = modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             items(jsonData.cards) { card ->
@@ -136,18 +136,16 @@ fun SiteCardsScreenBodyContent(modifier: Modifier, navController: NavController,
                         defaultElevation = 6.dp
                     ),
                     modifier = Modifier
-                        .width(280.dp)
-                        .clickable(
-                            onClick = {
-                                try {
-                                    uriHandler.openUri(card.url)
-                                } catch (_: Exception) {
-                                    scope.launch {
-                                        snackbarHostState.showSnackbar("Could not open URL \"${card.url}\"")
-                                    }
-                                }
+                        .width(280.dp),
+                    onClick = {
+                        try {
+                            uriHandler.openUri(card.url)
+                        } catch (_: Exception) {
+                            scope.launch {
+                                snackbarHostState.showSnackbar("Could not open URL \"${card.url}\"")
                             }
-                        )
+                        }
+                    }
                 ) {
                     Text(
                         text = card.title,
