@@ -81,8 +81,18 @@ class JSONRepository {
         save(_jsonData.value)
     }
 
+    fun updateCard(id: Int, title: String, description: String, url: String, labels: List<Int>) {
+        _jsonData.update { currentState ->
+            currentState.copy(
+                cards = currentState.cards.map { card ->
+                    if (card.id == id) card.copy(title = title, description = description, url = url, labels = labels) else card
+                }
+            )
+        }
+    }
+
     fun getLabelById(id: Int): JSONLabel {
-        var jsonLabel: JSONLabel = JSONLabel(title = "", color = "")
+        var jsonLabel = JSONLabel(title = "", color = "")
 
         for (label: JSONLabel in _jsonData.value.labels) {
             if (label.id == id) {
@@ -92,6 +102,19 @@ class JSONRepository {
         }
 
         return jsonLabel
+    }
+
+    fun getCardById(id: Int): JSONCard {
+        var jsonCard = JSONCard(title = "", url = "")
+
+        for (card: JSONCard in _jsonData.value.cards) {
+            if (card.id == id) {
+                jsonCard = card
+                break
+            }
+        }
+
+        return jsonCard
     }
 
     fun load(): JSONData {

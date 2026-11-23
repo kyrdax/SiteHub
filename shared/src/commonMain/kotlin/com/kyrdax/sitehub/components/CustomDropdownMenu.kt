@@ -25,20 +25,22 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kyrdax.sitehub.extensions.hexToColor
 import com.kyrdax.sitehub.repositories.JSONRepository
-import com.kyrdax.sitehub.states.AddCardState
-import com.kyrdax.sitehub.viewmodels.AddCardViewModel
+import com.kyrdax.sitehub.states.AddEditCardState
+import com.kyrdax.sitehub.viewmodels.AddEditCardViewModel
 import com.kyrdax.sitehub.viewmodels.DropdownMenuViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomDropdownMenu(
     jsonRepository: JSONRepository,
-    addCardViewModel: AddCardViewModel,
-    cardState: AddCardState
+    cardViewModel: AddEditCardViewModel,
+    cardState: AddEditCardState
 ) {
     var dropdownExpanded by remember { mutableStateOf(false) }
 
-    val dropdownMenuViewModel = viewModel { DropdownMenuViewModel() }
+    val dropdownMenuViewModel = viewModel { DropdownMenuViewModel(selected =
+        cardState.labelIds.map { jsonRepository.getLabelById(it).title }.toSet()
+    ) }
     val dropdownMenuState by dropdownMenuViewModel.dropdownMenuState.collectAsState()
 
     val jsonData by jsonRepository.jsonData.collectAsState()
@@ -131,7 +133,7 @@ fun CustomDropdownMenu(
                             },
                             onClick = {
                                 dropdownMenuViewModel.onSelectedChanged(if (checked) dropdownMenuState.selected - label.title else dropdownMenuState.selected + label.title)
-                                addCardViewModel.onLabelIdsChanged(if (checked) cardState.labelIds - label.id else cardState.labelIds + label.id)
+                                cardViewModel.onLabelIdsChanged(if (checked) cardState.labelIds - label.id else cardState.labelIds + label.id)
                             }
                         )
                     }

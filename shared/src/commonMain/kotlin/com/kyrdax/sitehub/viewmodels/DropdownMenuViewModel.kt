@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class DropdownMenuViewModel: ViewModel() {
-    private val _dropdownMenuState = MutableStateFlow(DropdownMenuState())
+class DropdownMenuViewModel(val selected: Set<String> = setOf()): ViewModel() {
+    private val _dropdownMenuState = MutableStateFlow(DropdownMenuState(selected = selected))
     val dropdownMenuState: StateFlow<DropdownMenuState> = _dropdownMenuState.asStateFlow()
 
     fun onFilterTextChanged(value: String) {

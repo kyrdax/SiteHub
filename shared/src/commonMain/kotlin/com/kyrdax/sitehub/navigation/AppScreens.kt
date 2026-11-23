@@ -6,4 +6,5 @@ sealed class AppScreens(val route: String) {
     object DeleteLabelScreen: AppScreens(route = "delete_label_screen")
     object EditLabelScreen: AppScreens(route = "edit_label_screen")
     object AddCardScreen: AppScreens(route = "add_card_screen")
+    object EditCardScreen: AppScreens(route = "edit_card_screen")
 }

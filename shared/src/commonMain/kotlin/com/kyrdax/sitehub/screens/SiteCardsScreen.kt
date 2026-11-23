@@ -200,7 +200,7 @@ fun SiteCardsScreenBodyContent(modifier: Modifier, navController: NavController,
                         Column {
                             IconButton(
                                 onClick = {
-                                    // TODO: Edit
+                                    navController.navigate(AppScreens.EditCardScreen.route + "/${card.id}")
                                 }
                             ) {
                                 Icon(

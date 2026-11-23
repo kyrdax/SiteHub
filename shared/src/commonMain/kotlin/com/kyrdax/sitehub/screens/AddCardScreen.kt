@@ -31,7 +31,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kyrdax.sitehub.components.CustomDropdownMenu
 import com.kyrdax.sitehub.models.JSONCard
-import com.kyrdax.sitehub.viewmodels.AddCardViewModel
+import com.kyrdax.sitehub.viewmodels.AddEditCardViewModel
 
 @Composable
 fun AddCardScreen(navController: NavController, jsonRepository: JSONRepository) {
@@ -80,7 +80,7 @@ fun AddCardScreenBodyContent(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val addCardViewModel: AddCardViewModel = viewModel { AddCardViewModel() }
+        val addCardViewModel: AddEditCardViewModel = viewModel { AddEditCardViewModel(jsonRepository = jsonRepository) }
         val addCardState by addCardViewModel.addCardState.collectAsState()
 
         var titleError by remember { mutableStateOf(false) }
@@ -130,7 +130,7 @@ fun AddCardScreenBodyContent(
 
         CustomDropdownMenu(
             jsonRepository = jsonRepository,
-            addCardViewModel = addCardViewModel,
+            cardViewModel = addCardViewModel,
             cardState = addCardState
         )
 

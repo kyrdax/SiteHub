@@ -12,6 +12,7 @@ import com.kyrdax.sitehub.repositories.JSONRepository
 import com.kyrdax.sitehub.screens.AddCardScreen
 import com.kyrdax.sitehub.screens.AddLabelScreen
 import com.kyrdax.sitehub.screens.DeleteLabelScreen
+import com.kyrdax.sitehub.screens.EditCardScreen
 import com.kyrdax.sitehub.screens.EditLabelScreen
 import com.kyrdax.sitehub.screens.SiteCardsScreen
 
@@ -50,6 +51,18 @@ fun AppNavigation(): Unit {
         }
         composable(route = AppScreens.AddCardScreen.route) {
             AddCardScreen(navController, jsonRepository)
+        }
+        composable(
+            route = AppScreens.EditCardScreen.route + "/{id}",
+            arguments = listOf(
+                navArgument(name = "id") {type = NavType.IntType}
+            )
+        ) {
+            EditCardScreen(
+                navController = navController,
+                cardId = it.arguments!!.read { getInt("id") },
+                jsonRepository = jsonRepository
+            )
         }
     }
 }
