@@ -92,7 +92,14 @@ fun EditLabelScreenBodyContent(modifier: Modifier, jsonRepository: JSONRepositor
         OutlinedTextField(
             value = editLabelState.labelTitle,
             onValueChange = {
-                editLabelViewModel.onLabelTitleChanged(it)
+                editLabelViewModel.onLabelTitleChanged(
+                    it.ifBlank { "" }
+                )
+            },
+            label = {
+                Text(
+                    text = "Title"
+                )
             },
             isError = labelTitleError
         )

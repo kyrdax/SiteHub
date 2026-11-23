@@ -68,7 +68,7 @@ fun CustomDropdownMenu(
                     }
                 },
                 onValueChange = {
-                    dropdownMenuViewModel.onFilterTextChanged(it)
+                    dropdownMenuViewModel.onFilterTextChanged(it.ifBlank { "" })
                     dropdownExpanded = true
                 },
                 label = {

@@ -127,12 +127,19 @@ fun DeleteLabelScreenBodyContent(
         OutlinedTextField(
             value = deleteLabelState.filterText,
             onValueChange = {
-                deleteLabelViewModel.onFilterTextChanged(it)
+                deleteLabelViewModel.onFilterTextChanged(
+                    it.ifBlank { "" }
+                )
             },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = "Search label"
+                )
+            },
+            placeholder = {
+                Text(
+                    text = "Search..."
                 )
             }
         )

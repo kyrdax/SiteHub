@@ -140,7 +140,7 @@ fun SiteCardsScreenBodyContent(modifier: Modifier, navController: NavController,
         OutlinedTextField(
             value = filterText,
             onValueChange = {
-                filterText = it
+                filterText = it.ifBlank { "" }
             },
             leadingIcon = {
                 Icon(

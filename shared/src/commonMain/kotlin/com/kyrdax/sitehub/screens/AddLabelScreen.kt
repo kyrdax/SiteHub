@@ -94,7 +94,9 @@ fun AddLabelScreenBodyContent(modifier: Modifier, navController: NavController, 
         OutlinedTextField(
             value = addLabelState.labelTitle,
             onValueChange = {
-                addLabelViewModel.onLabelTitleChanged(it)
+                addLabelViewModel.onLabelTitleChanged(
+                    it.ifBlank { "" }
+                )
 
                 if(addLabelState.labelTitle.isNotEmpty()) {
                     labelTitleError = false
