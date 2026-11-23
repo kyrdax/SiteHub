@@ -29,18 +29,6 @@ class AddCardViewModel: ViewModel() {
         }
     }
 
-    fun onFilterTextChanged(value: String) {
-        _addCardState.update { currentState ->
-            currentState.copy(filterText = value)
-        }
-    }
-
-    fun onSelectedChanged(value: Set<String>) {
-        _addCardState.update { currentState ->
-            currentState.copy(selected = value)
-        }
-    }
-
     fun onLabelIdsChanged(value: List<Int>) {
         _addCardState.update { currentState ->
             currentState.copy(labelIds = value)

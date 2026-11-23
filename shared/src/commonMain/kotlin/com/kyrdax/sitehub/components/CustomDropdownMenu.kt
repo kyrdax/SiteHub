@@ -22,24 +22,29 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kyrdax.sitehub.extensions.hexToColor
 import com.kyrdax.sitehub.repositories.JSONRepository
 import com.kyrdax.sitehub.states.AddCardState
 import com.kyrdax.sitehub.viewmodels.AddCardViewModel
+import com.kyrdax.sitehub.viewmodels.DropdownMenuViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomDropdownMenu(
     jsonRepository: JSONRepository,
     addCardViewModel: AddCardViewModel,
-    addCardState: AddCardState
+    cardState: AddCardState
 ) {
     var dropdownExpanded by remember { mutableStateOf(false) }
 
+    val dropdownMenuViewModel = viewModel { DropdownMenuViewModel() }
+    val dropdownMenuState by dropdownMenuViewModel.dropdownMenuState.collectAsState()
+
     val jsonData by jsonRepository.jsonData.collectAsState()
-    val filtered = jsonData.labels.filter { it.title.contains(addCardState.filterText, ignoreCase = true) }
-    val singleSelectedLabel = if (addCardState.selected.size == 1) {
-        jsonData.labels.firstOrNull { it.title == addCardState.selected.first() }
+    val filtered = jsonData.labels.filter { it.title.contains(dropdownMenuState.filterText, ignoreCase = true) }
+    val singleSelectedLabel = if (dropdownMenuState.selected.size == 1) {
+        jsonData.labels.firstOrNull { it.title == dropdownMenuState.selected.first() }
     } else null
 
     Column() {
@@ -47,21 +52,21 @@ fun CustomDropdownMenu(
             expanded = dropdownExpanded,
             onExpandedChange = {
                 dropdownExpanded = it
-                if (!dropdownExpanded) addCardViewModel.onFilterTextChanged("")
+                if (!dropdownExpanded) dropdownMenuViewModel.onFilterTextChanged("")
             }
         ) {
             OutlinedTextField(
                 value = if (dropdownExpanded) {
-                    addCardState.filterText
+                    dropdownMenuState.filterText
                 } else {
-                    when (addCardState.selected.size) {
+                    when (dropdownMenuState.selected.size) {
                         0 -> ""
-                        1 -> addCardState.selected.first()
-                        else -> "${addCardState.selected.size} elements selected"
+                        1 -> dropdownMenuState.selected.first()
+                        else -> "${dropdownMenuState.selected.size} elements selected"
                     }
                 },
                 onValueChange = {
-                    addCardViewModel.onFilterTextChanged(it)
+                    dropdownMenuViewModel.onFilterTextChanged(it)
                     dropdownExpanded = true
                 },
                 label = {
@@ -88,7 +93,7 @@ fun CustomDropdownMenu(
                 expanded = dropdownExpanded,
                 onDismissRequest = {
                     dropdownExpanded = false
-                    addCardViewModel.onFilterTextChanged("")
+                    dropdownMenuViewModel.onFilterTextChanged("")
                 }
             ) {
                 if (filtered.isEmpty()) {
@@ -103,7 +108,7 @@ fun CustomDropdownMenu(
                     )
                 } else {
                     filtered.forEach { label ->
-                        val checked = label.title in addCardState.selected
+                        val checked = label.title in dropdownMenuState.selected
                         DropdownMenuItem(
                             text = {
                                 Text(
@@ -125,8 +130,8 @@ fun CustomDropdownMenu(
                                 }
                             },
                             onClick = {
-                                addCardViewModel.onSelectedChanged(if (checked) addCardState.selected - label.title else addCardState.selected + label.title)
-                                addCardViewModel.onLabelIdsChanged(if (checked) addCardState.labelIds - label.id else addCardState.labelIds + label.id)
+                                dropdownMenuViewModel.onSelectedChanged(if (checked) dropdownMenuState.selected - label.title else dropdownMenuState.selected + label.title)
+                                addCardViewModel.onLabelIdsChanged(if (checked) cardState.labelIds - label.id else cardState.labelIds + label.id)
                             }
                         )
                     }

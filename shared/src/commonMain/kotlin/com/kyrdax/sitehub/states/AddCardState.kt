@@ -4,7 +4,5 @@ data class AddCardState (
     val cardTitle: String = "",
     val cardDesc: String = "",
     val url: String = "",
-    val filterText: String = "",
-    val selected: Set<String> = setOf(),
     val labelIds: List<Int> = emptyList()
 )
