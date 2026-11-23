@@ -42,6 +42,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.kyrdax.sitehub.components.CustomDropdownMenu
 import com.kyrdax.sitehub.extensions.hexToColor
 import com.kyrdax.sitehub.models.JSONCard
 import com.kyrdax.sitehub.states.AddCardState
@@ -177,115 +178,6 @@ fun AddCardScreenBodyContent(
             Text(
                 text = "Add"
             )
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CustomDropdownMenu(
-    jsonRepository: JSONRepository,
-    addCardViewModel: AddCardViewModel,
-    addCardState: AddCardState
-) {
-    var dropdownExpanded by remember { mutableStateOf(false) }
-
-    val jsonData by jsonRepository.jsonData.collectAsState()
-    val filtered = jsonData.labels.filter { it.title.contains(addCardState.filterText, ignoreCase = true) }
-    val singleSelectedLabel = if (addCardState.selected.size == 1) {
-        jsonData.labels.firstOrNull { it.title == addCardState.selected.first() }
-    } else null
-
-    Column() {
-        ExposedDropdownMenuBox(
-            expanded = dropdownExpanded,
-            onExpandedChange = {
-                dropdownExpanded = it
-                if (!dropdownExpanded) addCardViewModel.onFilterTextChanged("")
-            }
-        ) {
-            OutlinedTextField(
-                value = if (dropdownExpanded) {
-                    addCardState.filterText
-                } else {
-                    when (addCardState.selected.size) {
-                        0 -> ""
-                        1 -> addCardState.selected.first()
-                        else -> "${addCardState.selected.size} elements selected"
-                    }
-                },
-                onValueChange = {
-                    addCardViewModel.onFilterTextChanged(it)
-                    dropdownExpanded = true
-                },
-                label = {
-                    Text(
-                        text = "Labels (optional)"
-                    )
-                },
-                placeholder = {
-                    Text(
-                        text = "Search..."
-                    )
-                },
-                modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryEditable),
-                leadingIcon = {
-                    if (!dropdownExpanded && singleSelectedLabel != null) {
-                        Canvas(modifier = Modifier.size(24.dp)) {
-                            drawCircle(color = singleSelectedLabel.color.hexToColor())
-                        }
-                    }
-                }
-            )
-
-            ExposedDropdownMenu(
-                expanded = dropdownExpanded,
-                onDismissRequest = {
-                    dropdownExpanded = false
-                    addCardViewModel.onFilterTextChanged("")
-                }
-            ) {
-                if (filtered.isEmpty()) {
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = "No results"
-                            )
-                        },
-                        onClick = {},
-                        enabled = false
-                    )
-                } else {
-                    filtered.forEach { label ->
-                        val checked = label.title in addCardState.selected
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    text = label.title
-                                )
-                            },
-                            leadingIcon = {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Checkbox(
-                                        checked = checked,
-                                        onCheckedChange = null
-                                    )
-
-                                    Spacer(Modifier.width(8.dp))
-
-                                    Canvas(modifier = Modifier.size(24.dp)) {
-                                        drawCircle(color = label.color.hexToColor())
-                                    }
-                                }
-                            },
-                            onClick = {
-                                addCardViewModel.onSelectedChanged(if (checked) addCardState.selected - label.title else addCardState.selected + label.title)
-                                addCardViewModel.onLabelIdsChanged(if (checked) addCardState.labelIds - label.id else addCardState.labelIds + label.id)
-                            }
-                        )
-                    }
-                }
-            }
         }
     }
 }
