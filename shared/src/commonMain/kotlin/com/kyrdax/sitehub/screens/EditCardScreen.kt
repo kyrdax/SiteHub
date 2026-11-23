@@ -60,7 +60,7 @@ fun EditCardScreen(
                 },
                 title = {
                     Text(
-                        text = "Cards"
+                        text = "Edit card"
                     )
                 }
             )
