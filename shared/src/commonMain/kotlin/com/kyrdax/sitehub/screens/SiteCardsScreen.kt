@@ -138,8 +138,6 @@ fun SiteCardsScreenBodyContent(modifier: Modifier, navController: NavController,
             .padding(0.dp, 0.dp, 0.dp, 30.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        //CustomDropdownMenu()
-
         OutlinedTextField(
             value = siteCardsState.filterText,
             onValueChange = {
@@ -158,14 +156,46 @@ fun SiteCardsScreenBodyContent(modifier: Modifier, navController: NavController,
             }
         )
 
+        CustomDropdownMenu(
+            jsonRepository = jsonRepository,
+            cardState = siteCardsState,
+            cardViewModel = siteCardsViewModel
+        )
+
         LazyColumn(
             modifier = modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             items(
-                if (siteCardsState.filterText.isBlank()) jsonData.cards
-                else jsonData.cards.filter { it.title.contains(other = siteCardsState.filterText, ignoreCase = true) }
+                when {
+                    siteCardsState.filterText.isNotBlank() && siteCardsState.labelIds.isNotEmpty() -> {
+                        jsonData.cards.filter {
+                            it.title.contains(
+                                other = siteCardsState.filterText,
+                                ignoreCase = true
+                            ) && it.labels.containsAll(
+                                elements = siteCardsState.labelIds
+                            )
+                        }
+                    }
+                    siteCardsState.filterText.isNotBlank() -> {
+                        jsonData.cards.filter {
+                            it.title.contains(
+                                other = siteCardsState.filterText,
+                                ignoreCase = true
+                            )
+                        }
+                    }
+                    siteCardsState.labelIds.isNotEmpty() -> {
+                        jsonData.cards.filter {
+                            it.labels.containsAll(
+                                elements = siteCardsState.labelIds
+                            )
+                        }
+                    }
+                    else -> jsonData.cards
+                }
             ) { card ->
                 ElevatedCard(
                     elevation = CardDefaults.cardElevation(
