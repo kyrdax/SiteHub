@@ -17,7 +17,7 @@ import com.kyrdax.sitehub.screens.EditLabelScreen
 import com.kyrdax.sitehub.screens.SiteCardsScreen
 
 @Composable
-fun AppNavigation(): Unit {
+fun AppNavigation() {
     val navController: NavHostController = rememberNavController()
     val jsonRepository = JSONRepository()
 

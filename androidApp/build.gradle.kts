@@ -21,7 +21,11 @@ dependencies {
 
 android {
     namespace = "com.kyrdax.sitehub"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    compileSdk {
+        version = release(libs.versions.android.compileSdk.get().toInt()) {
+            minorApiLevel = libs.versions.android.minorApiLevel.get().toInt()
+        }
+    }
 
     defaultConfig {
         applicationId = "com.kyrdax.sitehub"

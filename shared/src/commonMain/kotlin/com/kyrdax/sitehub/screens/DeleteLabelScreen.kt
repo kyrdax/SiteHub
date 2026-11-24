@@ -41,9 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.kyrdax.sitehub.extensions.hexToColor
-import com.kyrdax.sitehub.navigation.AppScreens
 import com.kyrdax.sitehub.repositories.JSONRepository
 import com.kyrdax.sitehub.viewmodels.DeleteLabelViewModel
 import kotlinx.coroutines.launch

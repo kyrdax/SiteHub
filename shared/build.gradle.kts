@@ -45,7 +45,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.navigation.compose)
-            implementation(libs.squareup.okio.v3182)
+            implementation(libs.okio)
             implementation(libs.colorpicker.compose)
             implementation(libs.androidx.ui)
             implementation(libs.androidx.material.icons.core)

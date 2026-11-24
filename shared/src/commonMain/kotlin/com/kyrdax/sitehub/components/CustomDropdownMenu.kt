@@ -9,8 +9,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -88,7 +88,7 @@ fun CustomDropdownMenu(
                         text = "Search..."
                     )
                 },
-                modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryEditable),
+                modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable),
                 leadingIcon = {
                     if (!dropdownExpanded && singleSelectedLabel != null) {
                         Canvas(modifier = Modifier.size(24.dp)) {
@@ -202,7 +202,7 @@ fun CustomDropdownMenu(
                         text = "Search..."
                     )
                 },
-                modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryEditable),
+                modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable),
                 leadingIcon = {
                     if (!dropdownExpanded && singleSelectedLabel != null) {
                         Canvas(modifier = Modifier.size(24.dp)) {

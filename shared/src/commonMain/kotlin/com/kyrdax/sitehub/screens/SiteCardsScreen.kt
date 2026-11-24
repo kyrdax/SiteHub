@@ -44,9 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.kyrdax.sitehub.components.CustomDropdownMenu
-import com.kyrdax.sitehub.navigation.AppScreens
 import com.kyrdax.sitehub.repositories.JSONRepository
 import com.kyrdax.sitehub.viewmodels.SiteCardsViewModel
 import kotlinx.coroutines.launch
