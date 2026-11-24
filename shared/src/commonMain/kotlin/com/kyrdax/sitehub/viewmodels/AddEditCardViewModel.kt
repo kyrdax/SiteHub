@@ -46,4 +46,10 @@ class AddEditCardViewModel(jsonRepository: JSONRepository, cardId: Int = -1): Vi
             currentState.copy(labelIds = value)
         }
     }
+
+    fun onClearLabelsChanged(value: Boolean) {
+        _addCardState.update { currentState ->
+            currentState.copy(clearLabels = value)
+        }
+    }
 }

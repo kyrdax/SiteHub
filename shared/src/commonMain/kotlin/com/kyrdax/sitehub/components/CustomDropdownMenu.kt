@@ -45,6 +45,11 @@ fun CustomDropdownMenu(
     ) }
     val dropdownMenuState by dropdownMenuViewModel.dropdownMenuState.collectAsState()
 
+    if (cardState.clearLabels) {
+        dropdownMenuViewModel.onSelectedChanged(emptySet())
+        cardViewModel.onClearLabelsChanged(false)
+    }
+
     val jsonData by jsonRepository.jsonData.collectAsState()
     val filtered = jsonData.labels.filter { it.title.contains(dropdownMenuState.filterText, ignoreCase = true) }
     val singleSelectedLabel = if (dropdownMenuState.selected.size == 1) {

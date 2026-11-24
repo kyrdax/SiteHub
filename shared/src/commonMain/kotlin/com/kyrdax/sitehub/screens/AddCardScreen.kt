@@ -157,6 +157,18 @@ fun AddCardScreenBodyContent(
                         url = addCardState.url,
                         labels = addCardState.labelIds
                     ))
+
+                    scope.launch {
+                        snackbarHostState.showSnackbar("Card \"${addCardState.cardTitle}\" created successfully!")
+                    }
+
+                    scope.launch {
+                        addCardViewModel.onCardTitleChanged("")
+                        addCardViewModel.onUrlChanged("")
+                        addCardViewModel.onCardDescChanged("")
+                        addCardViewModel.onLabelIdsChanged(emptyList())
+                        addCardViewModel.onClearLabelsChanged(true)
+                    }
                 }
             }
         ) {
