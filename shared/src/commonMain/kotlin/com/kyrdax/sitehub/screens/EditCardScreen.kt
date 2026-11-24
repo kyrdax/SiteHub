@@ -98,7 +98,7 @@ fun EditCardScreenBodyContent(
         OutlinedTextField(
             value = editCardState.cardTitle,
             onValueChange = {
-                editCardViewModel.onCardTitleChanged(it)
+                editCardViewModel.onCardTitleChanged(it.ifBlank { "" })
             },
             label = {
                 Text(
@@ -110,7 +110,7 @@ fun EditCardScreenBodyContent(
         OutlinedTextField(
             value = editCardState.url,
             onValueChange = {
-                editCardViewModel.onUrlChanged(it)
+                editCardViewModel.onUrlChanged(it.ifBlank { "" })
             },
             label = {
                 Text(
@@ -122,7 +122,7 @@ fun EditCardScreenBodyContent(
         OutlinedTextField(
             value = editCardState.cardDesc,
             onValueChange = {
-                editCardViewModel.onCardDescChanged(it)
+                editCardViewModel.onCardDescChanged(it.ifBlank { "" })
             },
             label = {
                 Text(
