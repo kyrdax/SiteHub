@@ -149,6 +149,16 @@ fun AddCardScreenBodyContent(
                         snackbarHostState.currentSnackbarData?.dismiss()
                         snackbarHostState.showSnackbar("Mandatory fields must be informed")
                     }
+                } else if (jsonRepository.jsonData.value.cards.any {
+                        it.title.equals(
+                            addCardState.cardTitle,
+                            ignoreCase = true
+                        )
+                    }) {
+                    scope.launch {
+                        snackbarHostState.currentSnackbarData?.dismiss()
+                        snackbarHostState.showSnackbar("Card \"${addCardState.cardTitle}\" already exists")
+                    }
                 } else {
                     jsonRepository.add(JSONCard(
                         title = addCardState.cardTitle,
