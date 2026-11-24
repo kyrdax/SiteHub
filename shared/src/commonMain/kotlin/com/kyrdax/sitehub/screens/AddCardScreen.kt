@@ -146,6 +146,7 @@ fun AddCardScreenBodyContent(
                     }
 
                     scope.launch {
+                        snackbarHostState.currentSnackbarData?.dismiss()
                         snackbarHostState.showSnackbar("Mandatory fields must be informed")
                     }
                 } else {

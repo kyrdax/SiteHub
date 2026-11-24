@@ -125,6 +125,7 @@ fun AddLabelScreenBodyContent(modifier: Modifier, jsonRepository: JSONRepository
                 if (addLabelState.labelTitle.isBlank()) {
                     labelTitleError = true
                     scope.launch {
+                        snackbarHostState.currentSnackbarData?.dismiss()
                         snackbarHostState.showSnackbar("Mandatory fields must be informed")
                     }
                 } else if (jsonRepository.jsonData.value.labels.any {
@@ -134,6 +135,7 @@ fun AddLabelScreenBodyContent(modifier: Modifier, jsonRepository: JSONRepository
                         )
                     }) {
                     scope.launch {
+                        snackbarHostState.currentSnackbarData?.dismiss()
                         snackbarHostState.showSnackbar("Label \"${addLabelState.labelTitle}\" already exists")
                     }
                 } else {
