@@ -46,9 +46,12 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.kyrdax.sitehub.components.CustomDropdownMenu
 import com.kyrdax.sitehub.navigation.AppScreens
 import com.kyrdax.sitehub.repositories.JSONRepository
+import com.kyrdax.sitehub.viewmodels.SiteCardsViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -126,21 +129,21 @@ fun SiteCardsScreenBodyContent(modifier: Modifier, navController: NavController,
     val scope = rememberCoroutineScope()
 
     var showDeleteWarning by remember { mutableStateOf(false) }
-    var deleteCardId by remember { mutableStateOf(0) }
-    var deleteCardName by remember { mutableStateOf("") }
-    var filterText by remember { mutableStateOf("") }
+
+    val siteCardsViewModel = viewModel { SiteCardsViewModel() }
+    val siteCardsState by siteCardsViewModel.siteCardsState.collectAsState()
 
     Column(
         modifier = modifier.fillMaxSize()
             .padding(0.dp, 0.dp, 0.dp, 30.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        //TODO: Dropdown to filter by labels created by user
+        //CustomDropdownMenu()
 
         OutlinedTextField(
-            value = filterText,
+            value = siteCardsState.filterText,
             onValueChange = {
-                filterText = it.ifBlank { "" }
+                siteCardsViewModel.onFilterTextChanged(it.ifBlank { "" })
             },
             leadingIcon = {
                 Icon(
@@ -161,8 +164,8 @@ fun SiteCardsScreenBodyContent(modifier: Modifier, navController: NavController,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             items(
-                if (filterText.isBlank()) jsonData.cards
-                else jsonData.cards.filter { it.title.contains(other = filterText, ignoreCase = true) }
+                if (siteCardsState.filterText.isBlank()) jsonData.cards
+                else jsonData.cards.filter { it.title.contains(other = siteCardsState.filterText, ignoreCase = true) }
             ) { card ->
                 ElevatedCard(
                     elevation = CardDefaults.cardElevation(
@@ -212,8 +215,8 @@ fun SiteCardsScreenBodyContent(modifier: Modifier, navController: NavController,
                             IconButton(
                                 onClick = {
                                     showDeleteWarning = true
-                                    deleteCardName = card.title
-                                    deleteCardId = card.id
+                                    siteCardsViewModel.onDeleteCardNameChanged(card.title)
+                                    siteCardsViewModel.onDeleteCardIdChanged(card.id)
                                 }
                             ) {
                                 Icon(
@@ -240,13 +243,13 @@ fun SiteCardsScreenBodyContent(modifier: Modifier, navController: NavController,
             },
             text = {
                 Text(
-                    text = "Are you sure you want to delete the card \"$deleteCardName\"?"
+                    text = "Are you sure you want to delete the card \"$siteCardsState.deleteCardName\"?"
                 )
             },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        jsonRepository.deleteCard(deleteCardId)
+                        jsonRepository.deleteCard(siteCardsState.deleteCardId)
                         showDeleteWarning = false
                     }
                 ) {
