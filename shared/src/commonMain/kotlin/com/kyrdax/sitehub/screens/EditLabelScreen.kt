@@ -15,6 +15,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -22,6 +24,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +37,7 @@ import com.kyrdax.sitehub.extensions.hexToColor
 import com.kyrdax.sitehub.extensions.toHexCode
 import com.kyrdax.sitehub.repositories.JSONRepository
 import com.kyrdax.sitehub.viewmodels.AddEditLabelViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun EditLabelScreen(
@@ -42,6 +46,8 @@ fun EditLabelScreen(
     jsonRepository: JSONRepository,
     labelId: Int
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -63,13 +69,19 @@ fun EditLabelScreen(
                     }
                 }
             )
+        },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState
+            )
         }
     ) { innerPadding ->
         EditLabelScreenBodyContent(
             modifier = Modifier.padding(innerPadding),
             labelId = labelId,
             jsonRepository = jsonRepository,
-            onSaveButtonPressed = onSaveButtonPressed
+            onSaveButtonPressed = onSaveButtonPressed,
+            snackbarHostState = snackbarHostState
         )
     }
 }
@@ -79,7 +91,8 @@ fun EditLabelScreenBodyContent(
     modifier: Modifier,
     jsonRepository: JSONRepository,
     labelId: Int,
-    onSaveButtonPressed: () -> Unit
+    onSaveButtonPressed: () -> Unit,
+    snackbarHostState: SnackbarHostState
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
@@ -94,6 +107,8 @@ fun EditLabelScreenBodyContent(
             Color(editLabelState.selectedColorHex.hexToColor().value),
             fromUser = true
         )
+
+        val scope = rememberCoroutineScope()
 
         var labelTitleError by remember { mutableStateOf(false) }
 
@@ -132,6 +147,16 @@ fun EditLabelScreenBodyContent(
                 if (editLabelState.labelTitle.isBlank()) {
                     labelTitleError = true
                     editLabelViewModel.onLabelTitleChanged("")
+                } else if (jsonRepository.jsonData.value.labels.any {
+                        it.title.equals(
+                            editLabelState.labelTitle,
+                            ignoreCase = true
+                        )
+                    }) {
+                    scope.launch {
+                        snackbarHostState.currentSnackbarData?.dismiss()
+                        snackbarHostState.showSnackbar("Label \"${editLabelState.labelTitle}\" already exists")
+                    }
                 } else {
                     jsonRepository.updateLabel(
                         id = labelId,
