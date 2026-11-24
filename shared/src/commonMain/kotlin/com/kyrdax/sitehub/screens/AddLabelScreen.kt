@@ -40,7 +40,9 @@ import com.kyrdax.sitehub.viewmodels.AddEditLabelViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun AddLabelScreen(navController: NavController, jsonRepository: JSONRepository) {
+fun AddLabelScreen(
+    onBackButtonPressed: () -> Unit, jsonRepository: JSONRepository
+) {
     val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
@@ -55,7 +57,7 @@ fun AddLabelScreen(navController: NavController, jsonRepository: JSONRepository)
                 navigationIcon = {
                     IconButton(
                         onClick =  {
-                            navController.navigate(AppScreens.DeleteLabelScreen.route)
+                            onBackButtonPressed()
                         }
                     ) {
                         Icon(
@@ -69,7 +71,6 @@ fun AddLabelScreen(navController: NavController, jsonRepository: JSONRepository)
     ) { innerPadding ->
         AddLabelScreenBodyContent(
             modifier = Modifier.padding(innerPadding),
-            navController = navController,
             jsonRepository = jsonRepository,
             snackbarHostState = snackbarHostState
         )
@@ -77,7 +78,7 @@ fun AddLabelScreen(navController: NavController, jsonRepository: JSONRepository)
 }
 
 @Composable
-fun AddLabelScreenBodyContent(modifier: Modifier, navController: NavController, jsonRepository: JSONRepository, snackbarHostState: SnackbarHostState) {
+fun AddLabelScreenBodyContent(modifier: Modifier, jsonRepository: JSONRepository, snackbarHostState: SnackbarHostState) {
     val addLabelViewModel: AddEditLabelViewModel = viewModel { AddEditLabelViewModel(jsonRepository = jsonRepository) }
     val addLabelState by addLabelViewModel.addEditLabelState.collectAsState()
 

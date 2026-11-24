@@ -26,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.kyrdax.sitehub.components.CustomDropdownMenu
 import com.kyrdax.sitehub.navigation.AppScreens
 import com.kyrdax.sitehub.repositories.JSONRepository
@@ -35,7 +34,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun EditCardScreen(
-    navController: NavHostController,
+    onBackButtonPressed: () -> Unit,
+    onSaveButtonPressed: () -> Unit,
     cardId: Int,
     jsonRepository: JSONRepository,
 ) {
@@ -50,7 +50,7 @@ fun EditCardScreen(
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            navController.navigate(AppScreens.SiteCardsScreen.route)
+                            onBackButtonPressed()
                         }
                     ) {
                         Icon(
@@ -72,7 +72,7 @@ fun EditCardScreen(
             jsonRepository = jsonRepository,
             snackbarHostState = snackbarHostState,
             cardId = cardId,
-            navController = navController
+            onSaveButtonPressed = onSaveButtonPressed
         )
     }
 }
@@ -83,7 +83,7 @@ fun EditCardScreenBodyContent(
     jsonRepository: JSONRepository,
     snackbarHostState: SnackbarHostState,
     cardId: Int,
-    navController: NavController
+    onSaveButtonPressed: () -> Unit
 ) {
     var titleError by remember { mutableStateOf(false) }
     var urlError by remember { mutableStateOf(false) }
@@ -163,7 +163,7 @@ fun EditCardScreenBodyContent(
                         labels = editCardState.labelIds
                     )
 
-                    navController.navigate(AppScreens.SiteCardsScreen.route)
+                    onSaveButtonPressed()
                 }
             }
         ) {

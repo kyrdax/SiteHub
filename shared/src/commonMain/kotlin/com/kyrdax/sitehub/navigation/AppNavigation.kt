@@ -27,15 +27,39 @@ fun AppNavigation(): Unit {
     ) {
         composable(route = AppScreens.SiteCardsScreen.route) {
             SiteCardsScreen(
-                navController = navController,
+                onLabelsButtonPressed = {
+                    navController.navigate(AppScreens.DeleteLabelScreen.route)
+                },
+                onNewCardButtonPressed = {
+                    navController.navigate(AppScreens.AddCardScreen.route)
+                },
+                onEditCardButtonPressed = { cardId ->
+                    navController.navigate(AppScreens.EditCardScreen.route + "/${cardId}")
+                },
                 jsonRepository = jsonRepository
             )
         }
         composable(route = AppScreens.AddLabelScreen.route) {
-            AddLabelScreen(navController, jsonRepository)
+            AddLabelScreen(
+                onBackButtonPressed = {
+                    navController.navigate(AppScreens.DeleteLabelScreen.route)
+                },
+                jsonRepository = jsonRepository
+            )
         }
         composable(route = AppScreens.DeleteLabelScreen.route) {
-            DeleteLabelScreen(navController, jsonRepository)
+            DeleteLabelScreen(
+                onBackButtonPressed = {
+                    navController.navigate(AppScreens.SiteCardsScreen.route)
+                },
+                onNewLabelButtonPressed = {
+                    navController.navigate(AppScreens.AddLabelScreen.route)
+                },
+                onEditLabelButtonPressed = { labelId ->
+                    navController.navigate(AppScreens.EditLabelScreen.route + "/${labelId}")
+                },
+                jsonRepository = jsonRepository
+            )
         }
         composable(
             route = AppScreens.EditLabelScreen.route + "/{id}",
@@ -44,13 +68,23 @@ fun AppNavigation(): Unit {
             )
         ) {
             EditLabelScreen(
-                navController = navController,
+                onBackButtonPressed = {
+                    navController.navigate(AppScreens.DeleteLabelScreen.route)
+                },
+                onSaveButtonPressed = {
+                    navController.navigate(AppScreens.DeleteLabelScreen.route)
+                },
                 labelId = it.arguments!!.read { getInt("id") },
                 jsonRepository = jsonRepository
             )
         }
         composable(route = AppScreens.AddCardScreen.route) {
-            AddCardScreen(navController, jsonRepository)
+            AddCardScreen(
+                onBackIconPressed = {
+                    navController.navigate(AppScreens.SiteCardsScreen.route)
+                },
+                jsonRepository = jsonRepository
+            )
         }
         composable(
             route = AppScreens.EditCardScreen.route + "/{id}",
@@ -59,7 +93,12 @@ fun AppNavigation(): Unit {
             )
         ) {
             EditCardScreen(
-                navController = navController,
+                onBackButtonPressed = {
+                    navController.navigate(AppScreens.SiteCardsScreen.route)
+                },
+                onSaveButtonPressed = {
+                    navController.navigate(AppScreens.SiteCardsScreen.route)
+                },
                 cardId = it.arguments!!.read { getInt("id") },
                 jsonRepository = jsonRepository
             )

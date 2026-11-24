@@ -23,8 +23,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
-import com.kyrdax.sitehub.navigation.AppScreens
 import com.kyrdax.sitehub.repositories.JSONRepository
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.collectAsState
@@ -34,7 +32,7 @@ import com.kyrdax.sitehub.models.JSONCard
 import com.kyrdax.sitehub.viewmodels.AddEditCardViewModel
 
 @Composable
-fun AddCardScreen(navController: NavController, jsonRepository: JSONRepository) {
+fun AddCardScreen(onBackIconPressed: () -> Unit, jsonRepository: JSONRepository) {
     val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
@@ -49,7 +47,7 @@ fun AddCardScreen(navController: NavController, jsonRepository: JSONRepository) 
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            navController.navigate(AppScreens.SiteCardsScreen.route)
+                            onBackIconPressed()
                         }
                     ) {
                         Icon(

@@ -1,6 +1,5 @@
 package com.kyrdax.sitehub.screens
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,7 +18,6 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ElevatedCard
@@ -55,7 +52,12 @@ import com.kyrdax.sitehub.viewmodels.SiteCardsViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun SiteCardsScreen(navController: NavController, jsonRepository: JSONRepository) {
+fun SiteCardsScreen(
+    onLabelsButtonPressed: () -> Unit,
+    onNewCardButtonPressed: () -> Unit,
+    onEditCardButtonPressed: (cardId: Int) -> Unit,
+    jsonRepository: JSONRepository
+) {
     val snackbarHostState = remember { SnackbarHostState() }
 
     Box(
@@ -80,7 +82,7 @@ fun SiteCardsScreen(navController: NavController, jsonRepository: JSONRepository
                 Column {
                     FloatingActionButton(
                         onClick = {
-                            navController.navigate(AppScreens.DeleteLabelScreen.route)
+                            onLabelsButtonPressed()
                         },
                         modifier = Modifier.padding(8.dp)
                     ) {
@@ -90,7 +92,7 @@ fun SiteCardsScreen(navController: NavController, jsonRepository: JSONRepository
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Menu,
-                                contentDescription = "Add label"
+                                contentDescription = "Labels"
                             )
 
                             Text(
@@ -102,7 +104,7 @@ fun SiteCardsScreen(navController: NavController, jsonRepository: JSONRepository
 
                     FloatingActionButton(
                         onClick = {
-                            navController.navigate(AppScreens.AddCardScreen.route)
+                            onNewCardButtonPressed()
                         },
                         modifier = Modifier.padding(8.dp)
                     ) {
@@ -112,24 +114,22 @@ fun SiteCardsScreen(navController: NavController, jsonRepository: JSONRepository
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Add,
-                                contentDescription = "Add card"
+                                contentDescription = "New card"
                             )
 
                             Text(
                                 text = "New card"
                             )
                         }
-
-
                     }
                 }
             }
         ) { innerPadding ->
             SiteCardsScreenBodyContent(
                 modifier = Modifier.padding(innerPadding),
-                navController = navController,
                 jsonRepository = jsonRepository,
-                snackbarHostState = snackbarHostState
+                snackbarHostState = snackbarHostState,
+                onEditCardButtonPressed = onEditCardButtonPressed
             )
         }
 
@@ -143,7 +143,12 @@ fun SiteCardsScreen(navController: NavController, jsonRepository: JSONRepository
 }
 
 @Composable
-fun SiteCardsScreenBodyContent(modifier: Modifier, navController: NavController, jsonRepository: JSONRepository, snackbarHostState: SnackbarHostState) {
+fun SiteCardsScreenBodyContent(
+    modifier: Modifier,
+    jsonRepository: JSONRepository,
+    snackbarHostState: SnackbarHostState,
+    onEditCardButtonPressed: (cardId: Int) -> Unit
+) {
     val jsonData by jsonRepository.jsonData.collectAsState()
     val uriHandler = LocalUriHandler.current
 
@@ -254,7 +259,7 @@ fun SiteCardsScreenBodyContent(modifier: Modifier, navController: NavController,
                         Column {
                             IconButton(
                                 onClick = {
-                                    navController.navigate(AppScreens.EditCardScreen.route + "/${card.id}")
+                                    onEditCardButtonPressed(card.id)
                                 }
                             ) {
                                 Icon(

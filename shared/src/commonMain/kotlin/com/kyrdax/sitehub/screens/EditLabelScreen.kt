@@ -38,7 +38,12 @@ import com.kyrdax.sitehub.repositories.JSONRepository
 import com.kyrdax.sitehub.viewmodels.AddEditLabelViewModel
 
 @Composable
-fun EditLabelScreen(navController: NavController, jsonRepository: JSONRepository, labelId: Int) {
+fun EditLabelScreen(
+    onBackButtonPressed: () -> Unit,
+    onSaveButtonPressed: () -> Unit,
+    jsonRepository: JSONRepository,
+    labelId: Int
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -50,7 +55,7 @@ fun EditLabelScreen(navController: NavController, jsonRepository: JSONRepository
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            navController.navigate(AppScreens.DeleteLabelScreen.route)
+                            onBackButtonPressed()
                         }
                     ) {
                         Icon(
@@ -66,13 +71,18 @@ fun EditLabelScreen(navController: NavController, jsonRepository: JSONRepository
             modifier = Modifier.padding(innerPadding),
             labelId = labelId,
             jsonRepository = jsonRepository,
-            navController = navController
+            onSaveButtonPressed = onSaveButtonPressed
         )
     }
 }
 
 @Composable
-fun EditLabelScreenBodyContent(modifier: Modifier, jsonRepository: JSONRepository, labelId: Int, navController: NavController) {
+fun EditLabelScreenBodyContent(
+    modifier: Modifier,
+    jsonRepository: JSONRepository,
+    labelId: Int,
+    onSaveButtonPressed: () -> Unit
+) {
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -131,7 +141,7 @@ fun EditLabelScreenBodyContent(modifier: Modifier, jsonRepository: JSONRepositor
                         color = editLabelState.selectedColorHex
                     )
 
-                    navController.navigate(AppScreens.DeleteLabelScreen.route)
+                    onSaveButtonPressed()
                 }
             }
         ) {
