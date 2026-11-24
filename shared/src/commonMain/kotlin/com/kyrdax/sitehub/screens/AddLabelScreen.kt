@@ -142,6 +142,7 @@ fun AddLabelScreenBodyContent(modifier: Modifier, navController: NavController, 
                     )
 
                     scope.launch {
+                        snackbarHostState.currentSnackbarData?.dismiss()
                         snackbarHostState.showSnackbar("Label \"${addLabelState.labelTitle}\" created successfully!")
                     }
 

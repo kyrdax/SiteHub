@@ -301,11 +301,13 @@ fun SiteCardsScreenBodyContent(modifier: Modifier, navController: NavController,
                 TextButton(
                     onClick = {
                         jsonRepository.deleteCard(siteCardsState.deleteCardId)
-                        showDeleteWarning = false
 
                         scope.launch {
+                            snackbarHostState.currentSnackbarData?.dismiss()
                             snackbarHostState.showSnackbar("Card \"${siteCardsState.deleteCardName}\" deleted successfully!")
                         }
+
+                        showDeleteWarning = false
                     }
                 ) {
                     Text(

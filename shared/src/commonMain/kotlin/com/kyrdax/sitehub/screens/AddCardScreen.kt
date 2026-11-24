@@ -159,6 +159,7 @@ fun AddCardScreenBodyContent(
                     ))
 
                     scope.launch {
+                        snackbarHostState.currentSnackbarData?.dismiss()
                         snackbarHostState.showSnackbar("Card \"${addCardState.cardTitle}\" created successfully!")
                     }
 

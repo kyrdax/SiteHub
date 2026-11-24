@@ -254,6 +254,7 @@ fun DeleteLabelScreenBodyContent(
                         )
 
                         scope.launch {
+                            snackbarHostState.currentSnackbarData?.dismiss()
                             snackbarHostState.showSnackbar("Label \"${deleteLabelState.deleteLabelName}\" deleted successfully!")
                         }
 
