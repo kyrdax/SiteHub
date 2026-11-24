@@ -127,7 +127,7 @@ class JSONRepository {
         }
     }
 
-    fun save(jsonData: JSONData): Unit {
+    fun save(jsonData: JSONData) {
         FileSystem.SYSTEM.write(path) {
             writeUtf8(json.encodeToString(jsonData))
         }

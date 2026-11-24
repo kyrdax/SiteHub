@@ -19,7 +19,7 @@ import com.kyrdax.sitehub.screens.SiteCardsScreen
 @Composable
 fun AppNavigation(): Unit {
     val navController: NavHostController = rememberNavController()
-    val jsonRepository: JSONRepository = JSONRepository()
+    val jsonRepository = JSONRepository()
 
     NavHost(
         navController = navController,
