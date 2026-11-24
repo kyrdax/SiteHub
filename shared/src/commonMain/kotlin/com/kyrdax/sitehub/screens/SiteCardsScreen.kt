@@ -84,10 +84,20 @@ fun SiteCardsScreen(navController: NavController, jsonRepository: JSONRepository
                         },
                         modifier = Modifier.padding(8.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Menu,
-                            contentDescription = "Add label"
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(8.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Menu,
+                                contentDescription = "Add label"
+                            )
+
+                            Text(
+                                text = "Labels"
+                            )
+                        }
+
                     }
 
                     FloatingActionButton(
@@ -96,10 +106,21 @@ fun SiteCardsScreen(navController: NavController, jsonRepository: JSONRepository
                         },
                         modifier = Modifier.padding(8.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Add card"
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(8.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Add card"
+                            )
+
+                            Text(
+                                text = "New card"
+                            )
+                        }
+
+
                     }
                 }
             }

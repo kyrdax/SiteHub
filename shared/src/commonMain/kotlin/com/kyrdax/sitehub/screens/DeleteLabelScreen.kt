@@ -87,10 +87,19 @@ fun DeleteLabelScreen(navController: NavController, jsonRepository: JSONReposito
                     navController.navigate(AppScreens.AddLabelScreen.route)
                 }
             ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add"
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add"
+                    )
+
+                    Text(
+                        text = "New label"
+                    )
+                }
             }
         }
     ) { innerPadding ->
