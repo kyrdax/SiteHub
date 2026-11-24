@@ -124,7 +124,9 @@ fun AddLabelScreenBodyContent(modifier: Modifier, jsonRepository: JSONRepository
             onClick = {
                 if (addLabelState.labelTitle.isBlank()) {
                     labelTitleError = true
-                    addLabelViewModel.onLabelTitleChanged("")
+                    scope.launch {
+                        snackbarHostState.showSnackbar("Mandatory fields must be informed")
+                    }
                 } else if (jsonRepository.jsonData.value.labels.any {
                         it.title.equals(
                             addLabelState.labelTitle,
