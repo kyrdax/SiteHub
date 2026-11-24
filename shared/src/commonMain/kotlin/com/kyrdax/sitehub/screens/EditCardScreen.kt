@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.kyrdax.sitehub.components.CustomDropdownMenu
 import com.kyrdax.sitehub.navigation.AppScreens
@@ -70,7 +71,8 @@ fun EditCardScreen(
             modifier = Modifier.padding(innerPadding),
             jsonRepository = jsonRepository,
             snackbarHostState = snackbarHostState,
-            cardId = cardId
+            cardId = cardId,
+            navController = navController
         )
     }
 }
@@ -80,7 +82,8 @@ fun EditCardScreenBodyContent(
     modifier: Modifier,
     jsonRepository: JSONRepository,
     snackbarHostState: SnackbarHostState,
-    cardId: Int
+    cardId: Int,
+    navController: NavController
 ) {
     var titleError by remember { mutableStateOf(false) }
     var urlError by remember { mutableStateOf(false) }
@@ -159,6 +162,8 @@ fun EditCardScreenBodyContent(
                         url = editCardState.url,
                         labels = editCardState.labelIds
                     )
+
+                    navController.navigate(AppScreens.SiteCardsScreen.route)
                 }
             }
         ) {
