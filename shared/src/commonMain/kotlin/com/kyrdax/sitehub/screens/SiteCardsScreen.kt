@@ -273,7 +273,7 @@ fun SiteCardsScreenBodyContent(modifier: Modifier, navController: NavController,
             },
             text = {
                 Text(
-                    text = "Are you sure you want to delete the card \"$siteCardsState.deleteCardName\"?"
+                    text = "Are you sure you want to delete the card \"${siteCardsState.deleteCardName}\"?"
                 )
             },
             confirmButton = {
