@@ -53,6 +53,7 @@ kotlin {
             implementation(libs.colorpicker.compose)
             implementation(libs.androidx.ui)
             implementation(libs.androidx.material.icons.core)
+            api(libs.compose.components.resources)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -65,4 +66,9 @@ kotlin {
 
 dependencies {
     androidRuntimeClasspath(libs.compose.uiTooling)
+}
+
+compose.resources {
+    publicResClass = true
+    packageOfResClass = "com.kyrdax.sitehub.shared.resources"
 }

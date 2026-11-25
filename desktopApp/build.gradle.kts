@@ -21,8 +21,17 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Exe, TargetFormat.Msi)
-            packageName = "com.kyrdax.sitehub"
+            packageName = "SiteHub"
             packageVersion = "1.0.0"
+            description = "An app to save and quickly open your favorite websites."
+            copyright = "© 2026 kyrdax. All rights reserved."
+            vendor = "kyrdax"
+
+            windows {
+                iconFile.set(project.file("src/main/resources/sitehub_logo.ico"))
+                menuGroup = "SiteHub"
+                upgradeUuid = "90096b93-dcf9-4ea8-886f-4c5383542322"
+            }
         }
     }
 }
