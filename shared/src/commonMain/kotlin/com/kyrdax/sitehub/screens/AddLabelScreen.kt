@@ -124,7 +124,7 @@ fun AddLabelScreenBodyContent(
                     modifier = Modifier
                         .size(16.dp)
                         .background(
-                            color = addLabelState.selectedColorHex.hexToColor(),
+                            color = if (addLabelState.selectedColorHex.isBlank()) Color.White else addLabelState.selectedColorHex.hexToColor(),
                             shape = CircleShape
                         )
                 )
