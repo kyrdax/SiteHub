@@ -20,7 +20,7 @@ compose.desktop {
         mainClass = "com.kyrdax.sitehub.MainKt"
 
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            targetFormats(TargetFormat.Exe, TargetFormat.Msi)
             packageName = "com.kyrdax.sitehub"
             packageVersion = "1.0.0"
         }
