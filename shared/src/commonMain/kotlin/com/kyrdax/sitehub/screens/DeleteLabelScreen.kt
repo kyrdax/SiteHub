@@ -1,18 +1,21 @@
 package com.kyrdax.sitehub.screens
 
-import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -20,9 +23,10 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -59,45 +63,20 @@ fun DeleteLabelScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = {
-                    Text(
-                        text = "Labels"
-                    )
-                },
+                title = { Text("Labels") },
                 navigationIcon = {
-                    IconButton(
-                        onClick =  {
-                            onBackButtonPressed()
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                            contentDescription = "Back"
-                        )
+                    IconButton(onClick = onBackButtonPressed) {
+                        Icon(Icons.AutoMirrored.Default.ArrowBack, "Back")
                     }
                 }
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    onNewLabelButtonPressed()
-                }
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(8.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add"
-                    )
-
-                    Text(
-                        text = "New label"
-                    )
-                }
-            }
+            ExtendedFloatingActionButton(
+                onClick = onNewLabelButtonPressed,
+                icon = { Icon(Icons.Default.Add, "Add") },
+                text = { Text("New label") }
+            )
         }
     ) { innerPadding ->
         DeleteLabelScreenBodyContent(
@@ -125,90 +104,59 @@ fun DeleteLabelScreenBodyContent(
     var showDeleteWarning by remember { mutableStateOf(false) }
 
     Column(
-        modifier = modifier.fillMaxSize()
-            .padding(0.dp, 0.dp, 0.dp, 30.dp),
-        verticalArrangement = Arrangement.Center,
+        modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         OutlinedTextField(
             value = deleteLabelState.filterText,
-            onValueChange = {
-                deleteLabelViewModel.onFilterTextChanged(
-                    it.ifBlank { "" }
-                )
-            },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Search label"
-                )
-            },
-            placeholder = {
-                Text(
-                    text = "Search..."
-                )
-            }
+            onValueChange = { deleteLabelViewModel.onFilterTextChanged(it.ifBlank { "" }) },
+            leadingIcon = { Icon(Icons.Default.Search, "Search label") },
+            placeholder = { Text("Search...") },
+            singleLine = true,
+            modifier = Modifier
+                .padding(top = 12.dp, bottom = 8.dp)
+                .width(320.dp)
         )
 
         LazyColumn(
-            modifier = modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.fillMaxWidth().weight(1f),
+            contentPadding = PaddingValues(vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             items(
                 items = if (deleteLabelState.filterText.isBlank()) {
                     jsonData.labels
                 } else {
                     jsonData.labels.filter {
-                        it.title.contains(
-                            other = deleteLabelState.filterText,
-                            ignoreCase = true
-                        )
+                        it.title.contains(deleteLabelState.filterText, ignoreCase = true)
                     }
                 },
-                key = {it.id}
+                key = { it.id }
             ) { label ->
                 Row(
-                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp, vertical = 4.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Canvas(Modifier.size(24.dp)) {
-                        drawCircle(
-                            color = label.color.hexToColor()
-                        )
-                    }
-
-                    Spacer(
-                        modifier = Modifier.width(10.dp)
+                    Box(
+                        modifier = Modifier
+                            .size(16.dp)
+                            .background(label.color.hexToColor(), CircleShape)
                     )
 
-                    Box{
-                        OutlinedTextField(
-                            value = label.title,
-                            readOnly = true,
-                            onValueChange = {},
-                            modifier = Modifier.width(200.dp)
-                        )
+                    Spacer(Modifier.width(16.dp))
 
-                        Box(
-                            Modifier.matchParentSize().clickable(
-                                enabled = true,
-                                onClick = {
-                                    onEditLabelButtonPressed(label.id)
-                                }
-                            )
-                        )
-                    }
+                    Text(
+                        text = label.title,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable { onEditLabelButtonPressed(label.id) }
+                    )
 
-                    IconButton(
-                        onClick = {
-                            onEditLabelButtonPressed(label.id)
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit label"
-                        )
+                    IconButton(onClick = { onEditLabelButtonPressed(label.id) }) {
+                        Icon(Icons.Default.Edit, "Edit label")
                     }
 
                     IconButton(
@@ -218,61 +166,34 @@ fun DeleteLabelScreenBodyContent(
                             showDeleteWarning = true
                         }
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "Delete label"
-                        )
+                        Icon(Icons.Default.Delete, "Delete label")
                     }
                 }
             }
         }
     }
 
-    if(showDeleteWarning) {
+    if (showDeleteWarning) {
         AlertDialog(
-            onDismissRequest = {
-                showDeleteWarning = false
-            },
-            title = {
-                Text(
-                    text = "Delete"
-                )
-            },
+            onDismissRequest = { showDeleteWarning = false },
+            title = { Text("Delete") },
             text = {
-                Text(
-                    text = "Are you sure you want to delete the label \"${deleteLabelState.deleteLabelName}\"?"
-                )
+                Text("Are you sure you want to delete the label \"${deleteLabelState.deleteLabelName}\"?")
             },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        jsonRepository.deleteLabel(
-                            id = deleteLabelState.deleteLabelId
-                        )
-
+                        jsonRepository.deleteLabel(id = deleteLabelState.deleteLabelId)
                         scope.launch {
                             snackbarHostState.currentSnackbarData?.dismiss()
                             snackbarHostState.showSnackbar("Label \"${deleteLabelState.deleteLabelName}\" deleted successfully!")
                         }
-
                         showDeleteWarning = false
                     }
-                ) {
-                    Text(
-                        text = "Delete"
-                    )
-                }
+                ) { Text("Delete") }
             },
             dismissButton = {
-                TextButton(
-                    onClick = {
-                        showDeleteWarning = false
-                    }
-                ) {
-                    Text(
-                        text = "Cancel"
-                    )
-                }
+                TextButton(onClick = { showDeleteWarning = false }) { Text("Cancel") }
             }
         )
     }

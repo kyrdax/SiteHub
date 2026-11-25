@@ -1,11 +1,14 @@
 package com.kyrdax.sitehub.components
 
-import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,13 +39,16 @@ import com.kyrdax.sitehub.viewmodels.SiteCardsViewModel
 fun CustomDropdownMenu(
     jsonRepository: JSONRepository,
     cardViewModel: AddEditCardViewModel,
-    cardState: AddEditCardState
+    cardState: AddEditCardState,
+    modifier: Modifier = Modifier
 ) {
     var dropdownExpanded by remember { mutableStateOf(false) }
 
-    val dropdownMenuViewModel = viewModel { DropdownMenuViewModel(selected =
-        cardState.labelIds.map { jsonRepository.getLabelById(it).title }.toSet()
-    ) }
+    val dropdownMenuViewModel = viewModel {
+        DropdownMenuViewModel(
+            selected = cardState.labelIds.map { jsonRepository.getLabelById(it).title }.toSet()
+        )
+    }
     val dropdownMenuState by dropdownMenuViewModel.dropdownMenuState.collectAsState()
 
     if (cardState.clearLabels) {
@@ -51,12 +57,14 @@ fun CustomDropdownMenu(
     }
 
     val jsonData by jsonRepository.jsonData.collectAsState()
-    val filtered = jsonData.labels.filter { it.title.contains(dropdownMenuState.filterText, ignoreCase = true) }
+    val filtered = jsonData.labels.filter {
+        it.title.contains(dropdownMenuState.filterText, ignoreCase = true)
+    }
     val singleSelectedLabel = if (dropdownMenuState.selected.size == 1) {
         jsonData.labels.firstOrNull { it.title == dropdownMenuState.selected.first() }
     } else null
 
-    Column() {
+    Column(modifier = modifier) {
         ExposedDropdownMenuBox(
             expanded = dropdownExpanded,
             onExpandedChange = {
@@ -78,22 +86,22 @@ fun CustomDropdownMenu(
                     dropdownMenuViewModel.onFilterTextChanged(it.ifBlank { "" })
                     dropdownExpanded = true
                 },
-                label = {
-                    Text(
-                        text = "Labels (optional)"
-                    )
-                },
-                placeholder = {
-                    Text(
-                        text = "Search..."
-                    )
-                },
-                modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable),
+                label = { Text("Labels (optional)") },
+                placeholder = { Text("Search...") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable),
+                singleLine = true,
                 leadingIcon = {
                     if (!dropdownExpanded && singleSelectedLabel != null) {
-                        Canvas(modifier = Modifier.size(24.dp)) {
-                            drawCircle(color = singleSelectedLabel.color.hexToColor())
-                        }
+                        Box(
+                            modifier = Modifier
+                                .size(16.dp)
+                                .background(
+                                    color = singleSelectedLabel.color.hexToColor(),
+                                    shape = CircleShape
+                                )
+                        )
                     }
                 }
             )
@@ -107,11 +115,7 @@ fun CustomDropdownMenu(
             ) {
                 if (filtered.isEmpty()) {
                     DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = "No results"
-                            )
-                        },
+                        text = { Text("No results") },
                         onClick = {},
                         enabled = false
                     )
@@ -119,28 +123,30 @@ fun CustomDropdownMenu(
                     filtered.forEach { label ->
                         val checked = label.title in dropdownMenuState.selected
                         DropdownMenuItem(
-                            text = {
-                                Text(
-                                    text = label.title
-                                )
-                            },
+                            text = { Text(label.title) },
                             leadingIcon = {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Checkbox(
-                                        checked = checked,
-                                        onCheckedChange = null
-                                    )
-
+                                    Checkbox(checked = checked, onCheckedChange = null)
                                     Spacer(Modifier.width(8.dp))
-
-                                    Canvas(modifier = Modifier.size(24.dp)) {
-                                        drawCircle(color = label.color.hexToColor())
-                                    }
+                                    Box(
+                                        modifier = Modifier
+                                            .size(16.dp)
+                                            .background(
+                                                color = label.color.hexToColor(),
+                                                shape = CircleShape
+                                            )
+                                    )
                                 }
                             },
                             onClick = {
-                                dropdownMenuViewModel.onSelectedChanged(if (checked) dropdownMenuState.selected - label.title else dropdownMenuState.selected + label.title)
-                                cardViewModel.onLabelIdsChanged(if (checked) cardState.labelIds - label.id else cardState.labelIds + label.id)
+                                dropdownMenuViewModel.onSelectedChanged(
+                                    if (checked) dropdownMenuState.selected - label.title
+                                    else dropdownMenuState.selected + label.title
+                                )
+                                cardViewModel.onLabelIdsChanged(
+                                    if (checked) cardState.labelIds - label.id
+                                    else cardState.labelIds + label.id
+                                )
                             }
                         )
                     }
@@ -155,22 +161,27 @@ fun CustomDropdownMenu(
 fun CustomDropdownMenu(
     jsonRepository: JSONRepository,
     cardViewModel: SiteCardsViewModel,
-    cardState: SiteCardsState
+    cardState: SiteCardsState,
+    modifier: Modifier = Modifier
 ) {
     var dropdownExpanded by remember { mutableStateOf(false) }
 
-    val dropdownMenuViewModel = viewModel { DropdownMenuViewModel(selected =
-        cardState.labelIds.map { jsonRepository.getLabelById(it).title }.toSet()
-    ) }
+    val dropdownMenuViewModel = viewModel {
+        DropdownMenuViewModel(
+            selected = cardState.labelIds.map { jsonRepository.getLabelById(it).title }.toSet()
+        )
+    }
     val dropdownMenuState by dropdownMenuViewModel.dropdownMenuState.collectAsState()
 
     val jsonData by jsonRepository.jsonData.collectAsState()
-    val filtered = jsonData.labels.filter { it.title.contains(dropdownMenuState.filterText, ignoreCase = true) }
+    val filtered = jsonData.labels.filter {
+        it.title.contains(dropdownMenuState.filterText, ignoreCase = true)
+    }
     val singleSelectedLabel = if (dropdownMenuState.selected.size == 1) {
         jsonData.labels.firstOrNull { it.title == dropdownMenuState.selected.first() }
     } else null
 
-    Column() {
+    Column(modifier = modifier) {
         ExposedDropdownMenuBox(
             expanded = dropdownExpanded,
             onExpandedChange = {
@@ -192,22 +203,22 @@ fun CustomDropdownMenu(
                     dropdownMenuViewModel.onFilterTextChanged(it.ifBlank { "" })
                     dropdownExpanded = true
                 },
-                label = {
-                    Text(
-                        text = "Labels (optional)"
-                    )
-                },
-                placeholder = {
-                    Text(
-                        text = "Search..."
-                    )
-                },
-                modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable),
+                label = { Text("Labels (optional)") },
+                placeholder = { Text("Search...") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable),
+                singleLine = true,
                 leadingIcon = {
                     if (!dropdownExpanded && singleSelectedLabel != null) {
-                        Canvas(modifier = Modifier.size(24.dp)) {
-                            drawCircle(color = singleSelectedLabel.color.hexToColor())
-                        }
+                        Box(
+                            modifier = Modifier
+                                .size(16.dp)
+                                .background(
+                                    color = singleSelectedLabel.color.hexToColor(),
+                                    shape = CircleShape
+                                )
+                        )
                     }
                 }
             )
@@ -221,11 +232,7 @@ fun CustomDropdownMenu(
             ) {
                 if (filtered.isEmpty()) {
                     DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = "No results"
-                            )
-                        },
+                        text = { Text("No results") },
                         onClick = {},
                         enabled = false
                     )
@@ -233,28 +240,30 @@ fun CustomDropdownMenu(
                     filtered.forEach { label ->
                         val checked = label.title in dropdownMenuState.selected
                         DropdownMenuItem(
-                            text = {
-                                Text(
-                                    text = label.title
-                                )
-                            },
+                            text = { Text(label.title) },
                             leadingIcon = {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Checkbox(
-                                        checked = checked,
-                                        onCheckedChange = null
-                                    )
-
+                                    Checkbox(checked = checked, onCheckedChange = null)
                                     Spacer(Modifier.width(8.dp))
-
-                                    Canvas(modifier = Modifier.size(24.dp)) {
-                                        drawCircle(color = label.color.hexToColor())
-                                    }
+                                    Box(
+                                        modifier = Modifier
+                                            .size(16.dp)
+                                            .background(
+                                                color = label.color.hexToColor(),
+                                                shape = CircleShape
+                                            )
+                                    )
                                 }
                             },
                             onClick = {
-                                dropdownMenuViewModel.onSelectedChanged(if (checked) dropdownMenuState.selected - label.title else dropdownMenuState.selected + label.title)
-                                cardViewModel.onLabelIdsChanged(if (checked) cardState.labelIds - label.id else cardState.labelIds + label.id)
+                                dropdownMenuViewModel.onSelectedChanged(
+                                    if (checked) dropdownMenuState.selected - label.title
+                                    else dropdownMenuState.selected + label.title
+                                )
+                                cardViewModel.onLabelIdsChanged(
+                                    if (checked) cardState.labelIds - label.id
+                                    else cardState.labelIds + label.id
+                                )
                             }
                         )
                     }

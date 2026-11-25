@@ -1,18 +1,22 @@
 package com.kyrdax.sitehub.screens
 
-import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -49,30 +53,15 @@ fun EditLabelScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = {
-                    Text(
-                        text = "Edit label"
-                    )
-                },
+                title = { Text("Edit label") },
                 navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            onBackButtonPressed()
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                            contentDescription = "Back"
-                        )
+                    IconButton(onClick = onBackButtonPressed) {
+                        Icon(Icons.AutoMirrored.Default.ArrowBack, "Back")
                     }
                 }
-            )
-        },
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackbarHostState
             )
         }
     ) { innerPadding ->
@@ -94,83 +83,94 @@ fun EditLabelScreenBodyContent(
     onSaveButtonPressed: () -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+    val editLabelViewModel: AddEditLabelViewModel = viewModel {
+        AddEditLabelViewModel(jsonRepository = jsonRepository, labelId = labelId)
+    }
+    val editLabelState by editLabelViewModel.addEditLabelState.collectAsState()
+
+    val colorController = rememberColorPickerController()
+    colorController.selectByColor(
+        Color(editLabelState.selectedColorHex.hexToColor().value),
+        fromUser = true
+    )
+
+    val scope = rememberCoroutineScope()
+
+    var labelTitleError by remember { mutableStateOf(false) }
+
+    Box(
+        modifier = modifier.fillMaxSize().padding(16.dp),
+        contentAlignment = Alignment.Center
     ) {
-        val editLabelViewModel: AddEditLabelViewModel = viewModel { AddEditLabelViewModel(jsonRepository = jsonRepository, labelId = labelId) }
-        val editLabelState by editLabelViewModel.addEditLabelState.collectAsState()
-
-        val colorController = rememberColorPickerController()
-        colorController.selectByColor(
-            Color(editLabelState.selectedColorHex.hexToColor().value),
-            fromUser = true
-        )
-
-        val scope = rememberCoroutineScope()
-
-        var labelTitleError by remember { mutableStateOf(false) }
-
-        OutlinedTextField(
-            value = editLabelState.labelTitle,
-            onValueChange = {
-                editLabelViewModel.onLabelTitleChanged(
-                    it.ifBlank { "" }
-                )
-            },
-            label = {
-                Text(
-                    text = "Title"
-                )
-            },
-            isError = labelTitleError
-        )
-
-        HsvColorPicker(
-            modifier = Modifier.width(200.dp)
-                .height(200.dp),
-            controller = colorController,
-            onColorChanged = {
-                editLabelViewModel.onSelectedColorHexChanged(it.color.toHexCode())
-            }
-        )
-
-        Canvas(Modifier.size(50.dp)) {
-            drawCircle(
-                color = colorController.selectedColor.value
-            )
-        }
-
-        Button(
-            onClick = {
-                if (editLabelState.labelTitle.isBlank()) {
-                    labelTitleError = true
-                    editLabelViewModel.onLabelTitleChanged("")
-                } else if (jsonRepository.jsonData.value.labels.filter { it.id != labelId }.any {
-                        it.title.equals(
-                            editLabelState.labelTitle,
-                            ignoreCase = true
-                        )
-                    }) {
-                    scope.launch {
-                        snackbarHostState.currentSnackbarData?.dismiss()
-                        snackbarHostState.showSnackbar("Label \"${editLabelState.labelTitle}\" already exists")
-                    }
-                } else {
-                    jsonRepository.updateLabel(
-                        id = labelId,
-                        title = editLabelState.labelTitle,
-                        color = editLabelState.selectedColorHex
-                    )
-
-                    onSaveButtonPressed()
-                }
-            }
+        Column(
+            modifier = Modifier.width(320.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "Save"
+            OutlinedTextField(
+                value = editLabelState.labelTitle,
+                onValueChange = {
+                    labelTitleError = false
+                    editLabelViewModel.onLabelTitleChanged(it.ifBlank { "" })
+                },
+                label = { Text("Title") },
+                isError = labelTitleError,
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
             )
+
+            HsvColorPicker(
+                modifier = Modifier.size(200.dp),
+                controller = colorController,
+                onColorChanged = {
+                    editLabelViewModel.onSelectedColorHexChanged(it.color.toHexCode())
+                }
+            )
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(16.dp)
+                        .background(
+                            color = editLabelState.selectedColorHex.hexToColor(),
+                            shape = CircleShape
+                        )
+                )
+                Text(
+                    text = editLabelState.selectedColorHex,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            Button(
+                onClick = {
+                    if (editLabelState.labelTitle.isBlank()) {
+                        labelTitleError = true
+                        editLabelViewModel.onLabelTitleChanged("")
+                    } else if (jsonRepository.jsonData.value.labels.filter { it.id != labelId }.any {
+                            it.title.equals(editLabelState.labelTitle, ignoreCase = true)
+                        }) {
+                        scope.launch {
+                            snackbarHostState.currentSnackbarData?.dismiss()
+                            snackbarHostState.showSnackbar("Label \"${editLabelState.labelTitle}\" already exists")
+                        }
+                    } else {
+                        jsonRepository.updateLabel(
+                            id = labelId,
+                            title = editLabelState.labelTitle,
+                            color = editLabelState.selectedColorHex
+                        )
+                        onSaveButtonPressed()
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Save")
+            }
         }
     }
 }

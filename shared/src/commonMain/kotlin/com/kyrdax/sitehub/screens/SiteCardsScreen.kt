@@ -1,12 +1,13 @@
 package com.kyrdax.sitehub.screens
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,9 +22,10 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -40,9 +42,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kyrdax.sitehub.components.CustomDropdownMenu
 import com.kyrdax.sitehub.repositories.JSONRepository
@@ -58,84 +59,44 @@ fun SiteCardsScreen(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Scaffold(
-            topBar = {
-                CenterAlignedTopAppBar(
-                    title = {
-                        Text(
-                            text = "SiteHub"
-                        )
-                    },
-                    actions = {
-                        Text(
-                            text = "by kyrdax"
-                        )
-                    }
-                )
-            },
-            floatingActionButton = {
-                Column {
-                    FloatingActionButton(
-                        onClick = {
-                            onLabelsButtonPressed()
-                        },
-                        modifier = Modifier.padding(8.dp)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(8.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Menu,
-                                contentDescription = "Labels"
-                            )
-
-                            Text(
-                                text = "Labels"
-                            )
-                        }
-
-                    }
-
-                    FloatingActionButton(
-                        onClick = {
-                            onNewCardButtonPressed()
-                        },
-                        modifier = Modifier.padding(8.dp)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(8.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "New card"
-                            )
-
-                            Text(
-                                text = "New card"
-                            )
-                        }
-                    }
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text("SiteHub") },
+                actions = {
+                    Text(
+                        text = "by kyrdax",
+                        modifier = Modifier.padding(end = 16.dp),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
-            }
-        ) { innerPadding ->
-            SiteCardsScreenBodyContent(
-                modifier = Modifier.padding(innerPadding),
-                jsonRepository = jsonRepository,
-                snackbarHostState = snackbarHostState,
-                onEditCardButtonPressed = onEditCardButtonPressed
             )
+        },
+        floatingActionButton = {
+            Column(
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                ExtendedFloatingActionButton(
+                    onClick = onLabelsButtonPressed,
+                    icon = { Icon(Icons.Default.Menu, "Labels") },
+                    text = { Text("Labels") }
+                )
+                ExtendedFloatingActionButton(
+                    onClick = onNewCardButtonPressed,
+                    icon = { Icon(Icons.Default.Add, "New card") },
+                    text = { Text("New card") }
+                )
+            }
         }
-
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .navigationBarsPadding()
+    ) { innerPadding ->
+        SiteCardsScreenBodyContent(
+            modifier = Modifier.padding(innerPadding),
+            jsonRepository = jsonRepository,
+            snackbarHostState = snackbarHostState,
+            onEditCardButtonPressed = onEditCardButtonPressed
         )
     }
 }
@@ -149,7 +110,6 @@ fun SiteCardsScreenBodyContent(
 ) {
     val jsonData by jsonRepository.jsonData.collectAsState()
     val uriHandler = LocalUriHandler.current
-
     val scope = rememberCoroutineScope()
 
     var showDeleteWarning by remember { mutableStateOf(false) }
@@ -158,75 +118,63 @@ fun SiteCardsScreenBodyContent(
     val siteCardsState by siteCardsViewModel.siteCardsState.collectAsState()
 
     Column(
-        modifier = modifier.fillMaxSize()
-            .padding(0.dp, 0.dp, 0.dp, 30.dp),
+        modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        OutlinedTextField(
-            value = siteCardsState.filterText,
-            onValueChange = {
-                siteCardsViewModel.onFilterTextChanged(it.ifBlank { "" })
-            },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Search card"
-                )
-            },
-            placeholder = {
-                Text(
-                    text = "Search..."
-                )
-            }
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp, bottom = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            OutlinedTextField(
+                value = siteCardsState.filterText,
+                onValueChange = { siteCardsViewModel.onFilterTextChanged(it.ifBlank { "" }) },
+                leadingIcon = { Icon(Icons.Default.Search, "Search card") },
+                placeholder = { Text("Search...") },
+                singleLine = true,
+                modifier = Modifier.width(320.dp)
+            )
 
-        CustomDropdownMenu(
-            jsonRepository = jsonRepository,
-            cardState = siteCardsState,
-            cardViewModel = siteCardsViewModel
-        )
+            CustomDropdownMenu(
+                jsonRepository = jsonRepository,
+                cardState = siteCardsState,
+                cardViewModel = siteCardsViewModel,
+                modifier = Modifier.width(320.dp)
+            )
+        }
 
         LazyColumn(
-            modifier = modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Top,
+            modifier = Modifier.fillMaxWidth().weight(1f),
+            contentPadding = PaddingValues(vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             items(
                 when {
                     siteCardsState.filterText.isNotBlank() && siteCardsState.labelIds.isNotEmpty() -> {
                         jsonData.cards.filter {
-                            it.title.contains(
-                                other = siteCardsState.filterText,
-                                ignoreCase = true
-                            ) && it.labels.containsAll(
-                                elements = siteCardsState.labelIds
-                            )
+                            it.title.contains(siteCardsState.filterText, ignoreCase = true) &&
+                                    it.labels.containsAll(siteCardsState.labelIds)
                         }
                     }
                     siteCardsState.filterText.isNotBlank() -> {
                         jsonData.cards.filter {
-                            it.title.contains(
-                                other = siteCardsState.filterText,
-                                ignoreCase = true
-                            )
+                            it.title.contains(siteCardsState.filterText, ignoreCase = true)
                         }
                     }
                     siteCardsState.labelIds.isNotEmpty() -> {
                         jsonData.cards.filter {
-                            it.labels.containsAll(
-                                elements = siteCardsState.labelIds
-                            )
+                            it.labels.containsAll(siteCardsState.labelIds)
                         }
                     }
                     else -> jsonData.cards
                 }
             ) { card ->
                 ElevatedCard(
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 6.dp
-                    ),
-                    modifier = Modifier
-                        .width(280.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                    modifier = Modifier.width(320.dp),
                     onClick = {
                         try {
                             uriHandler.openUri(card.url)
@@ -237,35 +185,31 @@ fun SiteCardsScreenBodyContent(
                         }
                     }
                 ) {
-                    Text(
-                        text = card.title,
-                        modifier = Modifier.padding(16.dp),
-                        textAlign = TextAlign.Center,
-                        fontSize = 24.sp
-                    )
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
                         Text(
-                            text = card.description,
-                            modifier = Modifier.padding(16.dp, 0.dp, 0.dp, 0.dp),
-                            textAlign = TextAlign.Center
+                            text = card.title,
+                            style = MaterialTheme.typography.titleLarge,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
-
-                        Column {
-                            IconButton(
-                                onClick = {
-                                    onEditCardButtonPressed(card.id)
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Edit,
-                                    contentDescription = "Edit card"
-                                )
+                        if (card.description.isNotBlank()) {
+                            Spacer(Modifier.height(4.dp))
+                            Text(
+                                text = card.description,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                        Spacer(Modifier.height(8.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            IconButton(onClick = { onEditCardButtonPressed(card.id) }) {
+                                Icon(Icons.Default.Edit, "Edit card")
                             }
-
                             IconButton(
                                 onClick = {
                                     showDeleteWarning = true
@@ -273,10 +217,7 @@ fun SiteCardsScreenBodyContent(
                                     siteCardsViewModel.onDeleteCardIdChanged(card.id)
                                 }
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Delete,
-                                    contentDescription = "Delete card"
-                                )
+                                Icon(Icons.Default.Delete, "Delete card")
                             }
                         }
                     }
@@ -287,36 +228,25 @@ fun SiteCardsScreenBodyContent(
 
     if (showDeleteWarning) {
         AlertDialog(
-            onDismissRequest = {
-                showDeleteWarning = false
-            },
-            title = {
-                Text(
-                    text = "Delete card"
-                )
-            },
+            onDismissRequest = { showDeleteWarning = false },
+            title = { Text("Delete card") },
             text = {
-                Text(
-                    text = "Are you sure you want to delete the card \"${siteCardsState.deleteCardName}\"?"
-                )
+                Text("Are you sure you want to delete the card \"${siteCardsState.deleteCardName}\"?")
             },
             confirmButton = {
                 TextButton(
                     onClick = {
                         jsonRepository.deleteCard(siteCardsState.deleteCardId)
-
                         scope.launch {
                             snackbarHostState.currentSnackbarData?.dismiss()
                             snackbarHostState.showSnackbar("Card \"${siteCardsState.deleteCardName}\" deleted successfully!")
                         }
-
                         showDeleteWarning = false
                     }
-                ) {
-                    Text(
-                        text = "Delete"
-                    )
-                }
+                ) { Text("Delete") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteWarning = false }) { Text("Cancel") }
             }
         )
     }
