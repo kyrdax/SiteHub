@@ -191,6 +191,7 @@ fun SiteCardsScreenBodyContent(
                             uriHandler.openUri(card.url)
                         } catch (_: Exception) {
                             scope.launch {
+                                snackbarHostState.currentSnackbarData?.dismiss()
                                 snackbarHostState.showSnackbar("Could not open URL \"${card.url}\"")
                             }
                         }
