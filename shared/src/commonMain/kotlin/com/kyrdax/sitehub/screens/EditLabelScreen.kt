@@ -147,7 +147,7 @@ fun EditLabelScreenBodyContent(
                 if (editLabelState.labelTitle.isBlank()) {
                     labelTitleError = true
                     editLabelViewModel.onLabelTitleChanged("")
-                } else if (jsonRepository.jsonData.value.labels.any {
+                } else if (jsonRepository.jsonData.value.labels.filter { it.id != labelId }.any {
                         it.title.equals(
                             editLabelState.labelTitle,
                             ignoreCase = true

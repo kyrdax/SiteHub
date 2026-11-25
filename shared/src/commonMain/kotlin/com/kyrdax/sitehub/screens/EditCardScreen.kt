@@ -152,7 +152,7 @@ fun EditCardScreenBodyContent(
                     scope.launch {
                         snackbarHostState.showSnackbar("Mandatory fields must be informed")
                     }
-                } else if (jsonRepository.jsonData.value.cards.any {
+                } else if (jsonRepository.jsonData.value.cards.filter { it.id != cardId }.any {
                         it.title.equals(
                             editCardState.cardTitle,
                             ignoreCase = true
