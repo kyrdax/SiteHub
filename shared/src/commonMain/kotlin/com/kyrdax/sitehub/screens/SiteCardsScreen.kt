@@ -1,7 +1,10 @@
 package com.kyrdax.sitehub.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,9 +12,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -41,11 +46,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kyrdax.sitehub.components.CustomDropdownMenu
+import com.kyrdax.sitehub.extensions.hexToColor
 import com.kyrdax.sitehub.repositories.JSONRepository
 import com.kyrdax.sitehub.viewmodels.SiteCardsViewModel
 import kotlinx.coroutines.launch
@@ -146,7 +153,9 @@ fun SiteCardsScreenBodyContent(
         }
 
         LazyColumn(
-            modifier = Modifier.fillMaxWidth().weight(1f),
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
             contentPadding = PaddingValues(vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -172,6 +181,8 @@ fun SiteCardsScreenBodyContent(
                     else -> jsonData.cards
                 }
             ) { card ->
+                val cardLabels = jsonData.labels.filter { it.id in card.labels }
+
                 ElevatedCard(
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier.width(320.dp),
@@ -192,6 +203,7 @@ fun SiteCardsScreenBodyContent(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
+
                         if (card.description.isNotBlank()) {
                             Spacer(Modifier.height(4.dp))
                             Text(
@@ -202,6 +214,37 @@ fun SiteCardsScreenBodyContent(
                                 overflow = TextOverflow.Ellipsis
                             )
                         }
+
+                        if (cardLabels.isNotEmpty()) {
+                            Spacer(Modifier.height(12.dp))
+                            FlowRow(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                cardLabels.forEach { label ->
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(8.dp)
+                                                .background(
+                                                    color = if (label.color.isBlank()) Color.Transparent else label.color.hexToColor(),
+                                                    shape = CircleShape
+                                                )
+                                        )
+                                        Text(
+                                            text = label.title,
+                                            style = MaterialTheme.typography.labelMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
                         Spacer(Modifier.height(8.dp))
                         Row(
                             modifier = Modifier.fillMaxWidth(),
