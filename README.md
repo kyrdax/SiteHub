@@ -1,23 +1,25 @@
-This is a Kotlin Multiplatform project targeting Android, Desktop (JVM).
+# SiteHub
 
-* [/shared](./shared/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./shared/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./shared/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./shared/src/jvmMain/kotlin)
-    folder is the appropriate location.
+SiteHub is a minimalist, cross-platform application for saving and quickly accessing your favorite websites. 
 
-### Running the apps
+Instead of relying on cluttered browser bookmarks, SiteHub provides a clean, distraction-free space to store your links. You can organize them using custom color-coded tags and find them instantly with the built-in search.
 
-Use the run configurations provided by the run widget in your IDE's toolbar. You can also use these commands and options:
+## Features
 
-- Android app: `./gradlew :androidApp:assembleDebug`
-- Desktop app:
-  - Hot reload: `./gradlew :desktopApp:hotRun --auto`
-  - Standard run: `./gradlew :desktopApp:run`
+* **Cross-platform:** Available for Android and Windows.
+* **Custom labels:** Group your links using labels with custom colors.
+* **Fast filtering:** Search by title or filter your sites by specific tags.
+* **Portable option:** A standalone Windows version is available so you can carry your setup on a USB drive if needed.
 
----
+## Download
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+You can download the latest version for your operating system from the [Releases page](../../releases/latest).
+
+* **Android:** Download the `.apk` file and install it (you may need to allow installation from unknown sources).
+* **Windows:** Download the `.exe` or `.msi` installer, or grab the `.zip` if you prefer the portable version.
+
+> **Note for Windows users:** Since this application does not use a paid commercial code-signing certificate, Windows Defender or UAC might show an "Unknown publisher" warning on the first launch. You can safely bypass this by clicking "More info" and then "Run anyway".
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
